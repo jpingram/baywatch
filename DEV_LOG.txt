@@ -46,7 +46,7 @@
 	seq. fault happening on line 208
 		a case of pointer losing scope/expected value is suspected
 		most likely caused by line 101
-7th of May [11:21PM] - basic ticket info insertion (complete)
+7th of May [11:21AM] - basic ticket info insertion (complete)
 	changed addTicket function in box to create a new Ticket object on call
 		boxes now create and destroy tickets in their own scope
 		changed box.h and removeTicket in box.cpp accordingly
@@ -56,4 +56,7 @@
 		added 'selected' bool in TicketBucket with appropriate getter/setter
 		added bucket selection methods/instance variables to Controller
 		modified queue display objects to display selected bucket
+	UPDATE [11:36AM] - create git repository for BayWatch project
+		https://github.com/jpingram/baywatch
+		all current BayWatch directory files from 11:21AM build are included
 	
