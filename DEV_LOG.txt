@@ -1,0 +1,59 @@
+3rd of May [11:50AM] - started foundational work on BayWatch project (working title)
+	created basic classes
+		-Controller
+		-Ticket
+		-Box
+		-Rect (copied from Pheonix project)
+			added containsPoint function (currently untested)
+	copied data.cpp/data.h from Pheonix project (to make 'freeroad' font usable)
+	functions and headers for each class are defined
+	main.cpp skeleton exists but no functionality yet
+	primary goal for first stage is to implement box selection via mouse input
+3rd of May [3:08PM] - finished build 0.1 (foundation and box selection)
+	multiple boxes are able to be displayed
+	clicking on a box with the mouse selects it
+		also unselects other box(es) if another box was already selected
+		selected boxes are red, unselected boxes are white
+		added mouse coordinate debug text
+3rd of May [4:19PM] - added 'select status' system
+	required updates to box.h, box.cpp, and controller.cpp
+	clicked on an already selected box now updates that boxes 'select status'
+		standby->stage1->stage2->stage3->stage1->[...etc]
+4th of May [12:34PM] - reorganized data structures
+	added notes (string) instance varable to Ticket
+	'ticket' in Box changed to 'tickets'
+		now a vector<Ticket'>
+		updated display objects in Controller to accomondate
+	added label (string) instance variable to Box
+	reorganized methods in Box
+	created ticketQueue (vector<Ticket>) in Controller
+	create Text and RectangleShape object vectors for the ticket queue
+		created create and update methods to accomondate
+	updated main to draw queue text and rectangle objects
+	started research on SFGUI (for processing inputs)
+		downloaded CMake
+4th of May [3:18PM] - basic ticket info insertion (incomplete)
+	created TicketBucket object to store tickets with associated statistics
+		only stat right now is box number
+	changed ticketQueue to a vector<TicketBucket>
+	added addTicket() and removeTicket() functions to Box and Controller
+		added isIdUnique() in Controller
+	tested info input manually
+	TicketBucket queue works, references to tickets in Box causes seg. faults
+	SEE LINES:
+		Controller.cpp, Line 101: adds ticket pointer to box
+		Controller.cpp, Line 208: displays ticket ID of first ticket in box
+	seq. fault happening on line 208
+		a case of pointer losing scope/expected value is suspected
+		most likely caused by line 101
+7th of May [11:21PM] - basic ticket info insertion (complete)
+	changed addTicket function in box to create a new Ticket object on call
+		boxes now create and destroy tickets in their own scope
+		changed box.h and removeTicket in box.cpp accordingly
+	tested ticket adding and removing in Controller manually
+	added function setBoxNum in Controller to switch tickets from box to box
+	added functionality to select TicketBuckets in queue using the mouse
+		added 'selected' bool in TicketBucket with appropriate getter/setter
+		added bucket selection methods/instance variables to Controller
+		modified queue display objects to display selected bucket
+	

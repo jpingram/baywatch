@@ -1,0 +1,66 @@
+# depslib dependency file v1.0
+1557249984 source:c:\users\cookie cat\documents\baywatch\main.cpp
+	<SFML/Graphics.hpp>
+	<string>
+	<sstream>
+	"data.h"
+	"controller.h"
+
+1551489358 source:c:\users\cookie cat\documents\baywatch\data.cpp
+	<SFML/Graphics/Color.hpp>
+	"data.h"
+
+1551486720 c:\users\cookie cat\documents\baywatch\data.h
+	<SFML/Graphics/Color.hpp>
+
+1556919919 source:c:\users\cookie cat\documents\baywatch\rect.cpp
+	"rect.h"
+
+1556907219 c:\users\cookie cat\documents\baywatch\rect.h
+
+1557002515 source:c:\users\cookie cat\documents\baywatch\ticket.cpp
+	<string>
+	"ticket.h"
+
+1557000166 c:\users\cookie cat\documents\baywatch\ticket.h
+	<string>
+
+1557247156 source:c:\users\cookie cat\documents\baywatch\box.cpp
+	<string>
+	<vector>
+	"rect.h"
+	"ticket.h"
+	"box.h"
+
+1557246824 c:\users\cookie cat\documents\baywatch\box.h
+	<string>
+	<vector>
+	"ticket.h"
+	"rect.h"
+
+1557252260 source:c:\users\cookie cat\documents\baywatch\controller.cpp
+	<vector>
+	<string>
+	<sstream>
+	<SFML/Graphics/RectangleShape.hpp>
+	<SFML/Graphics/Text.hpp>
+	"data.h"
+	"box.h"
+	"ticketbucket.h"
+	"controller.h"
+
+1557251986 c:\users\cookie cat\documents\baywatch\controller.h
+	<vector>
+	<SFML/Graphics/RectangleShape.hpp>
+	<SFML/Graphics/Text.hpp>
+	"box.h"
+	"ticketbucket.h"
+
+1557251349 c:\users\cookie cat\documents\baywatch\ticketbucket.h
+	<string>
+	"ticket.h"
+
+1557251364 source:c:\users\cookie cat\documents\baywatch\ticketbucket.cpp
+	"ticket.h"
+	"ticketbucket.h"
+
