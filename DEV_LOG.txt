@@ -59,4 +59,10 @@
 	UPDATE [11:36AM] - create git repository for BayWatch project
 		https://github.com/jpingram/baywatch
 		all current BayWatch directory files from 11:21AM build are included
-	
+9th of May [11:53AM] - SFGUI installation (incomplete)
+	researched SFGUI installation methods
+	downloaded required files
+		SFGUI 0.4.0 source (needs to be built)
+		CMake
+			computer did not want to cooperate downloading CMake
+	CMake installed
