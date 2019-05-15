@@ -87,8 +87,15 @@
 		<memory> (for dynamic_pointer_cast<>())
 		others which may no longer be necessary
 	pop-up window allows for user input
+		ticket ID EditBox
+		vehicle info EditBox
+		bay info ComboBox (drop-down menu)
+		'OK' button
+		'Cancel' button
 	window calls addTicket() when 'OK' is pressed
-		both 'OK' and 'Cancel' close the window
+		both 'OK' and 'Cancel' make window invisible
+		POSSIBLE TODO: change buttons to close the window instead
+			unsure if it would cause functionality complications
 	if info allows for a legal vehicle input, new ticket is successfully created
 	TODO: allow for multiple uses of vehicle input window
 	TODO: clean-up code
