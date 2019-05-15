@@ -66,3 +66,11 @@
 		CMake
 			computer did not want to cooperate downloading CMake
 	CMake installed
+14th of May [5:42PM] - GUI Library Installation: Attempt #2
+	abandoned SFGUI
+		too many incompatibility issues
+		tried without CMAKE, failed to build when finally compiled
+	downloaded TGUI 0.8.5
+		reportedly simple to implement into SFML
+		version 0.8.5 is already pre-built
+		should work with current C++ compiler (MinGW 5.1.0)
