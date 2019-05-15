@@ -13,7 +13,7 @@
 #define QUEUE_Y_ZERO_POINT 400
 #define QUEUE_WIDTH 1200
 
-//enum conStatuses{boxselected, standby};
+enum conStatuses{noneSelected, boxSelected, bucketSelected};
 
 class Controller{
 private:
@@ -45,10 +45,12 @@ public:
     short isInBox(short x, short y); //if point is in box, returns index of box in boxList; else, returns -1
     void selectBox(short s);
     void deselectBox();
+    short getSelectedBox();
 
     short isInBucket(short x, short y); //if point is in a bucket, returns index of bucket in ticketQueue; else, returns -1
     void selectBucket(short s);
     void deselectBucket();
+    short getSelectedBucket();
 
     short addTicket(std::string newID, std::string newV, std::string newN, short s); //returns 0 is add successful, -1 if failed
     bool isIdUnique(std::string id);

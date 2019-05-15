@@ -1,15 +1,23 @@
+#include <TGUI/TGUI.hpp>
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <memory>
 #include "data.h"
 #include "controller.h"
 
 #define MAIN_WINDOW_WIDTH 1200
 #define MAIN_WINDOW_HEIGHT 600
 
+#define vwindow std::dynamic_pointer_cast<tgui::ChildWindow>(gui.get("child"))
+
+enum windowStatuses{base, add, added, edit, edited};
+static unsigned short status = windowStatuses::base;
+
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.1");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.2");
 
     //window focus boolean
     bool hasFocus = true;
@@ -18,7 +26,109 @@ int main(){
     bool leftMousePressed = false;
 
     Controller c;
-    c.addTicket("1234", "CHRYSLER", "", 2);
+
+    tgui::Gui gui(window);
+    std::stringstream guiStream;
+
+    try{
+        //CHILDWINDOW
+        auto child = tgui::ChildWindow::create();
+        //child->setRenderer(theme.getRenderer("ChildWindow"));
+        child->setSize(500, 300);
+        child->setPosition(200, 200);
+        child->setTitle("Ticket Info");
+        gui.add(child, "child");
+
+        //LABEL
+        auto label = tgui::Label::create();
+        //label->setRenderer(theme.getRenderer("Label"));
+        label->setText("Ticket ID:");
+        label->setPosition(10, 30);
+        label->setTextSize(15);
+        child->add(label, "idLabel");
+
+
+        //EDITBOX
+        auto editBox = tgui::EditBox::create();
+        //editBox->setRenderer(theme.getRenderer("EditBox"));
+        editBox->setSize(365, 25);
+        editBox->setTextSize(18);
+        editBox->setPosition(125, 30);
+        editBox->setDefaultText("");
+        child->add(editBox, "idInput");
+
+        //LABEL
+        label = tgui::Label::create();
+        //label->setRenderer(theme.getRenderer("Label"));
+        label->setText("Vehicle Info:");
+        label->setPosition(10, 60);
+        label->setTextSize(15);
+        child->add(label, "vehicleLabel");
+
+        //EDITBOX
+        editBox = tgui::EditBox::create();
+        //editBox->setRenderer(theme.getRenderer("EditBox"));
+        editBox->setSize(365, 25);
+        editBox->setTextSize(18);
+        editBox->setPosition(125, 60);
+        editBox->setDefaultText("");
+        child->add(editBox, "vehicleInput");
+
+        //LABEL
+        label = tgui::Label::create();
+        //label->setRenderer(theme.getRenderer("Label"));
+        label->setText("Bay:");
+        label->setPosition(10, 90);
+        label->setTextSize(15);
+        child->add(label, "bayLabel");
+
+        //combobox for now
+        auto comboBox = tgui::ComboBox::create();
+        //comboBox->setRenderer(theme.getRenderer("ComboBox"));
+        comboBox->setSize(120, 30);
+        comboBox->setPosition(50, 90);
+        comboBox->addItem("[none]");
+        comboBox->addItem("Bay 1");
+        comboBox->addItem("Bay 2");
+        comboBox->addItem("Bay 3");
+        comboBox->addItem("Bay 4");
+        comboBox->addItem("Bay 5");
+        comboBox->setSelectedItem("[none]");
+        child->add(comboBox, "bayInput");
+
+        //BUTTON
+        auto button = tgui::Button::create();
+        //button->setRenderer(theme.getRenderer("Button"));
+        button->setPosition(125, 200);
+        button->setText("OK");
+        button->setSize(100, 30);
+        button->connect("pressed", [&]() {
+            c.addTicket(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
+                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
+                        "",
+                        (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
+            child->setVisible(false);
+        });
+        child->add(button);
+
+        //BUTTON
+        button = tgui::Button::create();
+        //button->setRenderer(theme.getRenderer("Button"));
+        button->setPosition(275, 200);
+        button->setText("Cancel");
+        button->setSize(100, 30);
+        button->connect("pressed", [=](){
+            child->setVisible(false);
+        });
+        child->add(button);
+    }
+    catch (const tgui::Exception& e)
+    {
+        std::cerr << "TGUI Exception: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    /*c.addTicket("1234", "CHRYSLER", "", 2);
     c.addTicket("1235", "CHEVROLET TAHOE", "" , 3);
     c.addTicket("1235", "CHEVROLET CAPRESE", "" , 4);
     c.addTicket("1237", "CHEVROLET NEW CAPRESE", "CROSS ROTATION, CUSTOMER WAITING" , -1);
@@ -34,7 +144,7 @@ int main(){
     c.addTicket("1243", "PONTIAC SUNFIRE", "" , 3);
     c.removeTicket(3);
 
-    c.setBoxNum(2, 1);
+    c.setBoxNum(2, 1);*/
 
     sf::Font freeroadR;
     freeroadR.loadFromMemory(freeroadRegular, freeroadRegular_length);
@@ -73,6 +183,9 @@ int main(){
             if (event.type == sf::Event::GainedFocus){
                 hasFocus = true;
             }
+
+            //GUI EVENT HANDLER
+            gui.handleEvent(event);
         }//end while(window.pollEvent(event))
 
         //IF WINDOW HAS FOCUS, CHECK KEY INPUTS
@@ -110,6 +223,25 @@ int main(){
             }else{ //if the key isn't pressed, set the key's flag to false
                 leftMousePressed = false;
             }
+
+            /*if(status == windowStatuses::added){
+                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().getSize() != 0){
+                    c.addTicket(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
+                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
+                        "",
+                        (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
+                        status = windowStatuses::added;
+
+                    //CLEAN UP
+                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->setText("");
+                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->setText("");
+                    std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->setSelectedItemByIndex(0);
+                    //vwindow->setVisible(false);
+                }
+                mx.setString("heree");
+                //reset status
+                status = windowStatuses::base;
+            }*/
         }//end if(hasFocus)
 
         c.update(); //update controller display objects!
@@ -133,6 +265,8 @@ int main(){
 
         window.draw(mx);
         window.draw(my);
+
+        gui.draw();
 
         window.display(); //finally, display!
     }//end while(window.isOpen())

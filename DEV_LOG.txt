@@ -78,3 +78,21 @@
 	Texus' GUI successfully installed
 		example TGUI program builds and runs
 	ready to begin planning for BayWatch user input
+15th of May [4:04PM] - first instance of GUI integration into project
+	BayWatch 0.2 initiated
+		GOAL: integrate GUI pop up windows to handle user input
+		GOAL: allow for ticket creation, ticket editing, and ticket removal
+	included required libraries into main.cpp
+		TGUI/TGUI.hpp
+		<memory> (for dynamic_pointer_cast<>())
+		others which may no longer be necessary
+	pop-up window allows for user input
+	window calls addTicket() when 'OK' is pressed
+		both 'OK' and 'Cancel' close the window
+	if info allows for a legal vehicle input, new ticket is successfully created
+	TODO: allow for multiple uses of vehicle input window
+	TODO: clean-up code
+		learning important TGUI functions created some excess code
+			namely the connect() function for widgets/signals
+		excess commented out but still there
+		code may need some reorganization

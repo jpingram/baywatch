@@ -67,6 +67,7 @@ void Controller::selectBox(short s){
         if(s >= 0 && s < (short)boxList.size()){
             boxList[s].setSelected(true);
             selectedBox = s;
+            setStatus(conStatuses::boxSelected);
         }else{
             selectedBox = -1;
         }
@@ -76,8 +77,13 @@ void Controller::selectBox(short s){
 void Controller::deselectBox(){
     if(selectedBox != -1){
         boxList[selectedBox].setSelected(false);
+        setStatus(conStatuses::noneSelected);
     }
     selectedBox = -1;
+};
+
+short Controller::getSelectedBox(){
+    return selectedBox;
 };
 
 short Controller::isInBucket(short x, short y){
@@ -106,6 +112,7 @@ void Controller::selectBucket(short s){
         if(s >= 0 && s < (short)ticketQueue.size()){
             ticketQueue[s].setSelected(true);
             selectedBucket = s;
+            setStatus(conStatuses::bucketSelected);
         }else{
             selectedBucket = -1;
         }
@@ -115,8 +122,13 @@ void Controller::selectBucket(short s){
 void Controller::deselectBucket(){
     if(selectedBucket != -1){
         ticketQueue[selectedBucket].setSelected(false);
+        setStatus(conStatuses::noneSelected);
     }
     selectedBucket = -1;
+};
+
+short Controller::getSelectedBucket(){
+    return selectedBucket;
 };
 
 //TICKET RULES
