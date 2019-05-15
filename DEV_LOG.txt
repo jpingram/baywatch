@@ -74,3 +74,7 @@
 		reportedly simple to implement into SFML
 		version 0.8.5 is already pre-built
 		should work with current C++ compiler (MinGW 5.1.0)
+15th of May [10:42PM] - GUI Library Installation (Complete)
+	Texus' GUI successfully installed
+		example TGUI program builds and runs
+	ready to begin planning for BayWatch user input
