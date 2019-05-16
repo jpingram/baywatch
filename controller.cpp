@@ -20,12 +20,12 @@ Controller::Controller():boxList(), ticketQueue(), boxTextObjects(), boxRectObje
     update();
 };
 
-std::vector<Box> Controller::getBoxList(){
-    return boxList;
+std::vector<Box>* Controller::getBoxList(){
+    return &boxList;
 };
 
-std::vector<TicketBucket> Controller::getTicketQueue(){
-    return ticketQueue;
+std::vector<TicketBucket>* Controller::getTicketQueue(){
+    return &ticketQueue;
 };
 
 std::vector<sf::Text> Controller::getBoxTextObjects(){
@@ -206,12 +206,34 @@ void Controller::setBoxNum(unsigned short index, short newBox){
 
 };
 
+void Controller::updateTicket(short index, std::string newID, std::string newV, std::string newN){
+    if(index >= -1 && index < (short)ticketQueue.size()){
+        short boxIndex = ticketQueue[index].getBoxNum();
+        if(boxIndex != -1){
+            //find the ticket and then update ticket info
+            for(unsigned short i = 0; i < boxList[boxIndex].getTickets().size(); i++){
+                //if ID of ticket in bucket matches id of ticket in box, update info
+                if(ticketQueue[index].getTicket()->getID().compare(boxList[boxIndex].getTickets()[i]->getID()) == 0){
+                    boxList[boxIndex].getTickets()[i]->setID(newID);
+                    boxList[boxIndex].getTickets()[i]->setVehicle(newV);
+                    boxList[boxIndex].getTickets()[i]->setNotes(newN);
+                    break;
+                }
+            }
+        }
+
+        ticketQueue[index].updateTicket(newID, newV, newN);
+    }
+};
+
 void Controller::removeTicket(unsigned short s){
     //if s is a legal and active ticket bucket index number,
+    //  deselect ticketBucket, if applicable
     //  if the ticket in the bucket is referenced by a box
     //      remove that reference from that box
     //  remove the ticket bucket from queue
     if(s < ticketQueue.size()){
+        deselectBucket();
         if(ticketQueue[s].getBoxNum() != -1){
             boxList[ticketQueue[s].getBoxNum()].removeTicket(ticketQueue[s].getTicket()->getID());
         }
@@ -347,6 +369,7 @@ void Controller::updateQueueObjects(){
         i++;
     }
     while(i < QUEUE_TICKET_LIMIT){
+        queueRectObjects[i].setFillColor(sf::Color::Black);
         queueTextObjects[i].setString("");
         i++;
     }

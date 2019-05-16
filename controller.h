@@ -34,8 +34,8 @@ private:
 public:
     Controller();
 
-    std::vector<Box> getBoxList();
-    std::vector<TicketBucket> getTicketQueue();
+    std::vector<Box>* getBoxList();
+    std::vector<TicketBucket>* getTicketQueue();
 
     std::vector<sf::Text> getBoxTextObjects();
     std::vector<sf::RectangleShape> getBoxRectObjects();
@@ -58,6 +58,7 @@ public:
     short addTicket(std::string newID, std::string newV, std::string newN, short s); //returns 0 is add successful, -1 if failed
     bool isIdUnique(std::string id);
     void setBoxNum(unsigned short index, short newBox);
+    void updateTicket(short index, std::string newID, std::string newV, std::string newN); //updates ticketbucket at index and copy of ticket in box
     void removeTicket(unsigned short s);
 
     void update();

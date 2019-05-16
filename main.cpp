@@ -12,12 +12,12 @@
 
 #define vwindow std::dynamic_pointer_cast<tgui::ChildWindow>(gui.get("child"))
 #define menubar std::dynamic_pointer_cast<tgui::MenuBar>(gui.get("menu"))
-#define selectedBox c.getBoxList().at(c.getSelectedBox())
-#define selectedBucket c.getTicketQueue().at(c.getSelectedBucket())
+#define selectedBox c.getBoxList()->at(c.getSelectedBox())
+#define selectedBucket c.getTicketQueue()->at(c.getSelectedBucket())
 
 enum windowStatuses{base, add, added, edit, edited, cancelled};
-static unsigned short status = windowStatuses::base;
 enum windowType{a, e};
+static unsigned short status = windowStatuses::base;
 
 void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
     try{
@@ -50,12 +50,12 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         editBox->setPosition(125, 30);
         if(t == windowType::e){
             if(c.getSelectedBucket() >= 0){
-                editBox->setDefaultText(selectedBucket.getTicket()->getID());
+                editBox->setText(selectedBucket.getTicket()->getID());
             }else{
                 editBox->setDefaultText("ERROR: invalid selection");
             }
         }else{
-            editBox->setDefaultText("");
+            editBox->setDefaultText("Ex: 1234");
         }
         child->add(editBox, "idInput");
 
@@ -75,12 +75,12 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         editBox->setPosition(125, 60);
         if(t == windowType::e){
             if(c.getSelectedBucket() >= 0){
-                editBox->setDefaultText(selectedBucket.getTicket()->getVehicle());
+                editBox->setText(selectedBucket.getTicket()->getVehicle());
             }else{
                 editBox->setDefaultText("ERROR: invalid selection");
             }
         }else{
-            editBox->setDefaultText("");
+            editBox->setDefaultText("Ex: 2001 Chrysler Sebring");
         }
         child->add(editBox, "vehicleInput");
 
@@ -100,12 +100,12 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         editBox->setPosition(125, 90);
         if(t == windowType::e){
             if(c.getSelectedBucket() >= 0){
-                editBox->setDefaultText(selectedBucket.getTicket()->getNotes());
+                editBox->setText(selectedBucket.getTicket()->getNotes());
             }else{
                 editBox->setDefaultText("ERROR: invalid selection");
             }
         }else{
-            editBox->setDefaultText("");
+            editBox->setDefaultText("Ex: needs an oil change.");
         }
         child->add(editBox, "notesInput");
 
@@ -153,12 +153,16 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         }else
         if(t == windowType::e){
             button->connect("pressed", [&]() {
-                selectedBucket.updateTicket(
+                //NOTE: ORDER OF OERATIONS: box change relies on previous vehicle info
+                //  therefore, box change must happen first
+                //UPDATE: order doesn't matter with addition of updateTicket function in Controller
+                c.setBoxNum(c.getSelectedBucket(),
+                    (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
+                c.updateTicket(
+                    c.getSelectedBucket(),
                     std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
                     std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
                     std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString());
-                c.setBoxNum(c.getSelectedBucket(),
-                    (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
                 status = windowStatuses::edited;
             });
         }
@@ -185,7 +189,7 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.2.2");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.2.3");
 
     //window focus boolean
     bool hasFocus = true;
@@ -203,6 +207,7 @@ int main(){
         //menu->setRenderer(theme.getRenderer("MenuBar"));
         menu->setSize(static_cast<float>(window.getSize().x), 22.f);
         menu->addMenu("Ticket");
+
         menu->addMenuItem("New");
         menu->connectMenuItem({"Ticket", "New"}, [&](){
             if(status == windowStatuses::base){
@@ -210,6 +215,7 @@ int main(){
                 status = windowStatuses::add;
             }
         });
+
         menu->addMenuItem("Edit");
         menu->connectMenuItem({"Ticket", "Edit"}, [&](){
             if(status == windowStatuses::base){
@@ -221,6 +227,18 @@ int main(){
                 }
             }
         });
+
+        menu->addMenuItem("Remove");
+        menu->connectMenuItem({"Ticket", "Remove"}, [&](){
+            if(status == windowStatuses::base){
+                if(c.getSelectedBucket() >= 0){
+                    c.removeTicket(c.getSelectedBucket());
+                }else{
+                    std::cerr << "'Remove' error: no bucket selected" << std::endl;
+                }
+            }
+        });
+
         gui.add(menu, "menu");
     }
     catch (const tgui::Exception& e)
@@ -229,26 +247,9 @@ int main(){
         return EXIT_FAILURE;
     }
 
-    /*c.addTicket("1234", "CHRYSLER", "", 2);
-    c.addTicket("1235", "CHEVROLET TAHOE", "" , 3);
-    c.addTicket("1235", "CHEVROLET CAPRESE", "" , 4);
-    c.addTicket("1237", "CHEVROLET NEW CAPRESE", "CROSS ROTATION, CUSTOMER WAITING" , -1);
-
-    c.removeTicket(0);
-    c.addTicket("1239", "FORD AEROSTAR", "" , 3);
-    c.removeTicket(0);
-    c.addTicket("1240", "NISSAN ALTIMA", "SHOULD NOT APPEAR" , 3);
-    c.addTicket("1241", "NISSAN CUBE", "SHOULD APPEAR" , 3);
-    c.removeTicket(1);
-    c.removeTicket(1);
-    c.addTicket("1242", "FORD MUSTANG", "" , 3);
-    c.addTicket("1243", "PONTIAC SUNFIRE", "" , 3);
-    c.removeTicket(3);
-
-    c.setBoxNum(2, 1);*/
-
     sf::Font freeroadR;
     freeroadR.loadFromMemory(freeroadRegular, freeroadRegular_length);
+
     sf::Font freeroadB;
     freeroadB.loadFromMemory(freeroadBold, freeroadBold_length);
 
@@ -260,7 +261,6 @@ int main(){
     mx.setCharacterSize(15);
     mx.setPosition(0, 0 + TEXT_LINE_SPACING_15);
 
-    //debugTextObjects[1]
     sf::Text my;
     my.setFillColor(darkYellowish);
     my.setFont(freeroadR);

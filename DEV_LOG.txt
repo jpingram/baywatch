@@ -103,7 +103,7 @@
 			namely the connect() function for widgets/signals
 		excess commented out but still there
 		code may need some reorganization
-16th of May - [2:00PM]
+16th of May [2:00PM] - Aplha 0.2.2 user input/ticket creation cont'd
 	added menu bar
 		edited creation and use of 'vwindow' to work with menu bar
 			only one vwindow can be open at a given time
@@ -127,3 +127,26 @@
 		for use with newVehicleWindow()
 	added Label and EditBox in vwindow for notes info
 		placed between vehicle info and box number info
+16th of May [4:18PM] - Alpha 0.2 Completed!
+	user can now add, edit, and remove tickets using a GUI
+		functional but ugly
+	"Ticket" menu category
+		"Remove"
+			removes a ticketbucket (and it's ticket) from queue
+			calls c.removeTicket()
+				removes ticket from the box it is in, if in any
+			ticketbucket must already be selected to work
+				like "Edit", prints to cerr if no selection
+			FUTURE TODO: in-program pop-up error message boxes?
+	updateTicket() function added in Controller
+		calls updateTicket in ticketbucket
+		updates info of ticket in box if ticket is in a box
+	"Edit" function now works just fine
+		ID, Vehicle, and Notes data now appear in vwindow
+			all changes correctly update in ticket when 'OK' is pressed
+		needed to change getTicketQueue in Controller
+			new returns pointer to vector instead of a vector object
+	minor housekeeping done in main.cpp
+		some commented out code removed
+		some MACROs reorganized
+		default flavor text added to vwindow
