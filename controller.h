@@ -34,6 +34,9 @@ private:
 public:
     Controller();
 
+    std::vector<Box> getBoxList();
+    std::vector<TicketBucket> getTicketQueue();
+
     std::vector<sf::Text> getBoxTextObjects();
     std::vector<sf::RectangleShape> getBoxRectObjects();
     std::vector<sf::Text> getQueueTextObjects();

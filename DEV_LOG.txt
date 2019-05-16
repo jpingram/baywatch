@@ -103,3 +103,27 @@
 			namely the connect() function for widgets/signals
 		excess commented out but still there
 		code may need some reorganization
+16th of May - [2:00PM]
+	added menu bar
+		edited creation and use of 'vwindow' to work with menu bar
+			only one vwindow can be open at a given time
+		designed so selections can't be made while mouse is on the widget
+	"Ticket" menu category
+		"New" - creates a new vwindow
+			vwindow adds ticket info when 'OK' is pressed then closes
+			this system allows for multiple tickets to be created
+		"Edit" - creates new vwindow
+			populates window info with info from selected ticketbucket
+			updates selected ticketbucket data with info from vwindow
+			NOTE: currently only correctly changes BoxNum
+	selections no longer happen/change while a vwindow is open
+	added newVehicleWindow() in main
+	added functionality for 'status' in main
+	minor changes to Controller
+		added getters for boxList and ticketQueue in Controller
+		tweeked setBoxNum in Controller
+	added 'windowType' enum in main
+		'a' for 'add' and 'e' for 'edit'
+		for use with newVehicleWindow()
+	added Label and EditBox in vwindow for notes info
+		placed between vehicle info and box number info

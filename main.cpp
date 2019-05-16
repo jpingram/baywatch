@@ -11,32 +11,27 @@
 #define MAIN_WINDOW_HEIGHT 600
 
 #define vwindow std::dynamic_pointer_cast<tgui::ChildWindow>(gui.get("child"))
+#define menubar std::dynamic_pointer_cast<tgui::MenuBar>(gui.get("menu"))
+#define selectedBox c.getBoxList().at(c.getSelectedBox())
+#define selectedBucket c.getTicketQueue().at(c.getSelectedBucket())
 
-enum windowStatuses{base, add, added, edit, edited};
+enum windowStatuses{base, add, added, edit, edited, cancelled};
 static unsigned short status = windowStatuses::base;
+enum windowType{a, e};
 
-int main(){
-    //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.2");
-
-    //window focus boolean
-    bool hasFocus = true;
-
-    //input pressed booleans
-    bool leftMousePressed = false;
-
-    Controller c;
-
-    tgui::Gui gui(window);
-    std::stringstream guiStream;
-
+void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
     try{
         //CHILDWINDOW
         auto child = tgui::ChildWindow::create();
         //child->setRenderer(theme.getRenderer("ChildWindow"));
         child->setSize(500, 300);
         child->setPosition(200, 200);
-        child->setTitle("Ticket Info");
+        if(t == windowType::a){
+            child->setTitle("New Ticket Info");
+        }else
+        if(t == windowType::e){
+            child->setTitle("Edit Ticket Info");
+        }
         gui.add(child, "child");
 
         //LABEL
@@ -47,14 +42,21 @@ int main(){
         label->setTextSize(15);
         child->add(label, "idLabel");
 
-
         //EDITBOX
         auto editBox = tgui::EditBox::create();
         //editBox->setRenderer(theme.getRenderer("EditBox"));
         editBox->setSize(365, 25);
         editBox->setTextSize(18);
         editBox->setPosition(125, 30);
-        editBox->setDefaultText("");
+        if(t == windowType::e){
+            if(c.getSelectedBucket() >= 0){
+                editBox->setDefaultText(selectedBucket.getTicket()->getID());
+            }else{
+                editBox->setDefaultText("ERROR: invalid selection");
+            }
+        }else{
+            editBox->setDefaultText("");
+        }
         child->add(editBox, "idInput");
 
         //LABEL
@@ -71,14 +73,47 @@ int main(){
         editBox->setSize(365, 25);
         editBox->setTextSize(18);
         editBox->setPosition(125, 60);
-        editBox->setDefaultText("");
+        if(t == windowType::e){
+            if(c.getSelectedBucket() >= 0){
+                editBox->setDefaultText(selectedBucket.getTicket()->getVehicle());
+            }else{
+                editBox->setDefaultText("ERROR: invalid selection");
+            }
+        }else{
+            editBox->setDefaultText("");
+        }
         child->add(editBox, "vehicleInput");
 
         //LABEL
         label = tgui::Label::create();
         //label->setRenderer(theme.getRenderer("Label"));
-        label->setText("Bay:");
+        label->setText("Notes:");
         label->setPosition(10, 90);
+        label->setTextSize(15);
+        child->add(label, "notesLabel");
+
+        //EDITBOX
+        editBox = tgui::EditBox::create();
+        //editBox->setRenderer(theme.getRenderer("EditBox"));
+        editBox->setSize(365, 25);
+        editBox->setTextSize(18);
+        editBox->setPosition(125, 90);
+        if(t == windowType::e){
+            if(c.getSelectedBucket() >= 0){
+                editBox->setDefaultText(selectedBucket.getTicket()->getNotes());
+            }else{
+                editBox->setDefaultText("ERROR: invalid selection");
+            }
+        }else{
+            editBox->setDefaultText("");
+        }
+        child->add(editBox, "notesInput");
+
+        //LABEL
+        label = tgui::Label::create();
+        //label->setRenderer(theme.getRenderer("Label"));
+        label->setText("Bay:");
+        label->setPosition(10, 120);
         label->setTextSize(15);
         child->add(label, "bayLabel");
 
@@ -86,7 +121,7 @@ int main(){
         auto comboBox = tgui::ComboBox::create();
         //comboBox->setRenderer(theme.getRenderer("ComboBox"));
         comboBox->setSize(120, 30);
-        comboBox->setPosition(50, 90);
+        comboBox->setPosition(50, 120);
         comboBox->addItem("[none]");
         comboBox->addItem("Bay 1");
         comboBox->addItem("Bay 2");
@@ -94,6 +129,11 @@ int main(){
         comboBox->addItem("Bay 4");
         comboBox->addItem("Bay 5");
         comboBox->setSelectedItem("[none]");
+        if(t == windowType::e){
+            if(c.getSelectedBucket() >= 0){
+                comboBox->setSelectedItemByIndex(selectedBucket.getBoxNum() + 1);
+            }
+        }
         child->add(comboBox, "bayInput");
 
         //BUTTON
@@ -102,13 +142,26 @@ int main(){
         button->setPosition(125, 200);
         button->setText("OK");
         button->setSize(100, 30);
-        button->connect("pressed", [&]() {
-            c.addTicket(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
-                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
-                        "",
-                        (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
-            child->setVisible(false);
-        });
+        if(t == windowType::a){
+            button->connect("pressed", [&]() {
+                c.addTicket(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
+                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
+                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString(),
+                    (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
+                status = windowStatuses::added;
+            });
+        }else
+        if(t == windowType::e){
+            button->connect("pressed", [&]() {
+                selectedBucket.updateTicket(
+                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
+                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
+                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString());
+                c.setBoxNum(c.getSelectedBucket(),
+                    (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
+                status = windowStatuses::edited;
+            });
+        }
         child->add(button);
 
         //BUTTON
@@ -118,9 +171,57 @@ int main(){
         button->setText("Cancel");
         button->setSize(100, 30);
         button->connect("pressed", [=](){
-            child->setVisible(false);
+            status = windowStatuses::base;
+            child->close();
         });
         child->add(button);
+    }
+    catch (const tgui::Exception& e)
+    {
+        std::cerr << "TGUI Exception: " << e.what() << std::endl;
+        //return EXIT_FAILURE;
+    }
+};
+
+int main(){
+    //create window and window related objects
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.2.2");
+
+    //window focus boolean
+    bool hasFocus = true;
+
+    //input pressed booleans
+    bool leftMousePressed = false;
+
+    Controller c;
+
+    tgui::Gui gui(window);
+    std::stringstream guiStream;
+
+    try{
+        auto menu = tgui::MenuBar::create();
+        //menu->setRenderer(theme.getRenderer("MenuBar"));
+        menu->setSize(static_cast<float>(window.getSize().x), 22.f);
+        menu->addMenu("Ticket");
+        menu->addMenuItem("New");
+        menu->connectMenuItem({"Ticket", "New"}, [&](){
+            if(status == windowStatuses::base){
+                newVehicleWindow(gui, c, windowType::a);
+                status = windowStatuses::add;
+            }
+        });
+        menu->addMenuItem("Edit");
+        menu->connectMenuItem({"Ticket", "Edit"}, [&](){
+            if(status == windowStatuses::base){
+                if(c.getSelectedBucket() >= 0){
+                    newVehicleWindow(gui, c, windowType::e);
+                    status = windowStatuses::edit;
+                }else{
+                    std::cerr << "vwindow 'Edit' build error: no bucket selected" << std::endl;
+                }
+            }
+        });
+        gui.add(menu, "menu");
     }
     catch (const tgui::Exception& e)
     {
@@ -194,22 +295,29 @@ int main(){
                 if(!leftMousePressed){ //if not pressed to start, set to pressed and do action
                     leftMousePressed = true;
 
-                    //check if mouse is in the area of a box
-                    //if yes, select that box
-                    short boxIndex = c.isInBox(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-                    if(boxIndex != -1){
-                        c.selectBox(boxIndex);
-                    }else{
-                        c.deselectBox();
-                    }
+                    //check to see if mouse is selecting an object
+                    //BUT:
+                    //  only if the mouse isn't using the menu
+                    //  and only if the window status is 'base'
+                    if(menubar->mouseOnWidget(tgui::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y)) == false
+                       && status == windowStatuses::base){
+                        //check if mouse is in the area of a box
+                        //if yes, select that box
+                        short boxIndex = c.isInBox(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                        if(boxIndex != -1){
+                            c.selectBox(boxIndex);
+                        }else{
+                            c.deselectBox();
+                        }
 
-                    //check if mouse is in the area of a bucket
-                    //if yes, select that box
-                    short buckIndex = c.isInBucket(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-                    if(buckIndex != -1){
-                        c.selectBucket(buckIndex);
-                    }else{
-                        c.deselectBucket();
+                        //check if mouse is in the area of a bucket
+                        //if yes, select that box
+                        short buckIndex = c.isInBucket(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                        if(buckIndex != -1){
+                            c.selectBucket(buckIndex);
+                        }else{
+                            c.deselectBucket();
+                        }
                     }
 
                     ss.str(std::string());
@@ -224,24 +332,18 @@ int main(){
                 leftMousePressed = false;
             }
 
-            /*if(status == windowStatuses::added){
-                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().getSize() != 0){
-                    c.addTicket(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
-                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
-                        "",
-                        (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
-                        status = windowStatuses::added;
+            if(status == windowStatuses::added){
+                vwindow->close();
 
-                    //CLEAN UP
-                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->setText("");
-                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->setText("");
-                    std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->setSelectedItemByIndex(0);
-                    //vwindow->setVisible(false);
-                }
-                mx.setString("heree");
                 //reset status
                 status = windowStatuses::base;
-            }*/
+            }else
+            if(status == windowStatuses::edited){
+                vwindow->close();
+
+                //reset status
+                status = windowStatuses::base;
+            }
         }//end if(hasFocus)
 
         c.update(); //update controller display objects!

@@ -20,6 +20,14 @@ Controller::Controller():boxList(), ticketQueue(), boxTextObjects(), boxRectObje
     update();
 };
 
+std::vector<Box> Controller::getBoxList(){
+    return boxList;
+};
+
+std::vector<TicketBucket> Controller::getTicketQueue(){
+    return ticketQueue;
+};
+
 std::vector<sf::Text> Controller::getBoxTextObjects(){
     return boxTextObjects;
 };
@@ -178,6 +186,12 @@ void Controller::setBoxNum(unsigned short index, short newBox){
     //  add ticket to box at boxList[newBox]
     if(index >= -1 && index < (short)ticketQueue.size()){
         if(ticketQueue[index].getBoxNum() != -1){
+            //if the bucket is already assigned to the target box, abort
+            if(ticketQueue[index].getBoxNum() == newBox){
+                return;
+            }
+
+            //else, remove target ticket from it's current box
             boxList[ticketQueue[index].getBoxNum()].removeTicket(ticketQueue[index].getTicket()->getID());
         }
 
