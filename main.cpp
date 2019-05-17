@@ -32,6 +32,10 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         if(t == windowType::e){
             child->setTitle("Edit Ticket Info");
         }
+        child->connect("closed", [&](){
+            status = windowStatuses::base;
+            child->destroy();
+        });
         gui.add(child, "child");
 
         //LABEL
