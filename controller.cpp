@@ -1,6 +1,13 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <memory>
+#include <TGUI/Gui.hpp>
+#include <TGUI/Layout.hpp>
+#include <TGUI/Vector2f.hpp>
+#include <TGUI/Renderers/LabelRenderer.hpp>
+#include <TGUI/Widgets/Label.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include "data.h"
@@ -20,6 +27,14 @@ Controller::Controller():boxList(), ticketQueue(), boxTextObjects(), boxRectObje
     update();
 };
 
+void Controller::setRenderTarget(sf::RenderTarget &target){
+    try{
+        boxTextObjects.setTarget(target);
+    }catch(const tgui::Exception &e){
+        std::cerr << "TGUI Exception in Controller::setRenderTarget(): " << e.what() << std::endl;
+    }
+};
+
 std::vector<Box>* Controller::getBoxList(){
     return &boxList;
 };
@@ -28,8 +43,8 @@ std::vector<TicketBucket>* Controller::getTicketQueue(){
     return &ticketQueue;
 };
 
-std::vector<sf::Text> Controller::getBoxTextObjects(){
-    return boxTextObjects;
+tgui::Gui* Controller::getBoxTextObjects(){
+    return &boxTextObjects;
 };
 
 std::vector<sf::RectangleShape> Controller::getBoxRectObjects(){
@@ -248,10 +263,12 @@ void Controller::update(){
 
 void Controller::createBoxObjects(){
     for(int i = 0; i < 5; i++){
-        Box test(100 + i*200, 100, 150, 250);
+        std::stringstream ss;
+        ss << "Bay" << (i+1);
+        Box test(ss.str(), BOX_X_ZERO_POINT+(i*BOX_WIDTH)+(i*10), BOX_Y_ZERO_POINT, BOX_WIDTH, BOX_HEIGHT);
         boxList.push_back(test);
 
-        sf::Text indexText;
+        /*sf::Text indexText;
         indexText.setFont(freeroadB);
         indexText.setCharacterSize(15);
         indexText.setPosition(test.getBoundary()->getX(), test.getBoundary()->getY());
@@ -270,7 +287,45 @@ void Controller::createBoxObjects(){
         vText.setCharacterSize(15);
         vText.setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 2*TEXT_LINE_SPACING_15);
         vText.setFillColor(sf::Color::White);
-        boxTextObjects.push_back(vText);
+        boxTextObjects.push_back(vText);*/
+
+        try{
+            boxTextObjects.setFont(freeroadB);
+
+            //BAY LABEL
+            auto label = tgui::Label::create();
+            label->setText("Bay:");
+            label->setTextSize(15);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY());
+            label->setSize(tgui::Layout2d(tgui::Vector2f(BOX_WIDTH, TEXT_LINE_SPACING_15)));
+            label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+            label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+            ss.str(std::string());
+            ss << "bayLabel" << i;
+            boxTextObjects.add(label, ss.str());
+
+            //TICKET ID
+            label = tgui::Label::create();
+            label->setText("Bay:");
+            label->setTextSize(15);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + TEXT_LINE_SPACING_15);
+            label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+            ss.str(std::string());
+            ss << "idLabel" << i;
+            boxTextObjects.add(label, ss.str());
+
+            //VEHICLE INFO
+            label = tgui::Label::create();
+            label->setText("Bay:");
+            label->setTextSize(15);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 2*TEXT_LINE_SPACING_15);
+            label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+            ss.str(std::string());
+            ss << "vLabel" << i;
+            boxTextObjects.add(label, ss.str());
+        }catch(const tgui::Exception &e){
+            std::cerr << "TGUI Exception in Controller::createBoxObjects(): " << e.what() << std::endl;
+        }
 
         sf::RectangleShape boxBoundary;
         boxBoundary.setSize(sf::Vector2f(test.getBoundary()->getW(), test.getBoundary()->getH()));
@@ -295,17 +350,20 @@ void Controller::updateBoxObjects(){
 
         //box label text
         //SET FONT
-        if(i == selectedBox && boxList[selectedBox].getStatus() != selectStatuses::stage1){
+        /*if(i == selectedBox && boxList[selectedBox].getStatus() != selectStatuses::stage1){
             boxTextObjects[i*3].setFont(freeroadR);
         }else{
             boxTextObjects[i*3].setFont(freeroadB);
         }
         //SET TEXT
-        boxTextObjects[i*3].setString(boxList[i].getLabel());
+        boxTextObjects[i*3].setString(boxList[i].getLabel());*/
+        ss.str(std::string());
+        ss << "bayLabel" << i;
+        std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getLabel());
 
         //ticket ID text
         //SET FONT
-        if(i == selectedBox && boxList[selectedBox].getStatus() == selectStatuses::stage2){
+        /*if(i == selectedBox && boxList[selectedBox].getStatus() == selectStatuses::stage2){
             boxTextObjects[i*3+1].setFont(freeroadB);
         }else{
             boxTextObjects[i*3+1].setFont(freeroadR);
@@ -315,11 +373,18 @@ void Controller::updateBoxObjects(){
             boxTextObjects[i*3+1].setString("...");
         }else{
             boxTextObjects[i*3+1].setString(boxList[i].getTickets()[0]->getID());
+        }*/
+        ss.str(std::string());
+        ss << "idLabel" << i;
+        if(boxList[i].getTickets().empty()){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("...");
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getTickets()[0]->getID());
         }
 
         //vehicle text
         //SET FONT
-        if(i == selectedBox && boxList[selectedBox].getStatus() == selectStatuses::stage3){
+        /*if(i == selectedBox && boxList[selectedBox].getStatus() == selectStatuses::stage3){
             boxTextObjects[i*3+2].setFont(freeroadB);
         }else{
             boxTextObjects[i*3+2].setFont(freeroadR);
@@ -329,6 +394,13 @@ void Controller::updateBoxObjects(){
             boxTextObjects[i*3+2].setString("VACANT");
         }else{
             boxTextObjects[i*3+2].setString(boxList[i].getTickets()[0]->getVehicle());
+        }*/
+        ss.str(std::string());
+        ss << "vLabel" << i;
+        if(boxList[i].getTickets().empty()){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("...");
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getTickets()[0]->getVehicle());
         }
     }
 };

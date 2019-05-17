@@ -127,11 +127,9 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         comboBox->setSize(120, 30);
         comboBox->setPosition(50, 120);
         comboBox->addItem("[none]");
-        comboBox->addItem("Bay 1");
-        comboBox->addItem("Bay 2");
-        comboBox->addItem("Bay 3");
-        comboBox->addItem("Bay 4");
-        comboBox->addItem("Bay 5");
+        for(unsigned short i = 0; i < c.getBoxList()->size(); i++){
+            comboBox->addItem(c.getBoxList()->at(i).getLabel());
+        }
         comboBox->setSelectedItem("[none]");
         if(t == windowType::e){
             if(c.getSelectedBucket() >= 0){
@@ -180,7 +178,7 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         button->setSize(100, 30);
         button->connect("pressed", [=](){
             status = windowStatuses::base;
-            child->close();
+            child->destroy();
         });
         child->add(button);
     }
@@ -193,7 +191,7 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.2.3");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.3");
 
     //window focus boolean
     bool hasFocus = true;
@@ -202,6 +200,7 @@ int main(){
     bool leftMousePressed = false;
 
     Controller c;
+    c.setRenderTarget(window);
 
     tgui::Gui gui(window);
     std::stringstream guiStream;
@@ -271,6 +270,18 @@ int main(){
     my.setCharacterSize(15);
     my.setPosition(0, 0 + 2*TEXT_LINE_SPACING_15);
 
+    sf::Text mx2;
+    mx2.setFillColor(greenish);
+    mx2.setFont(freeroadR);
+    mx2.setCharacterSize(15);
+    mx2.setPosition(0, 0 + 3*TEXT_LINE_SPACING_15);
+
+    sf::Text my2;
+    my2.setFillColor(darkGreenish);
+    my2.setFont(freeroadR);
+    my2.setCharacterSize(15);
+    my2.setPosition(0, 0 + 4*TEXT_LINE_SPACING_15);
+
     while(window.isOpen()){
         //EVENT OBJECT AND EVENT POLLING LOOP
         sf::Event event;
@@ -299,15 +310,17 @@ int main(){
                 if(!leftMousePressed){ //if not pressed to start, set to pressed and do action
                     leftMousePressed = true;
 
+                    sf::Vector2i realMouseLoc = sf::Mouse::getPosition(window);
+                    sf::Vector2f relativeMouseLoc = window.mapPixelToCoords(realMouseLoc);
                     //check to see if mouse is selecting an object
                     //BUT:
                     //  only if the mouse isn't using the menu
                     //  and only if the window status is 'base'
-                    if(menubar->mouseOnWidget(tgui::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y)) == false
+                    if(menubar->mouseOnWidget(tgui::Vector2f(realMouseLoc.x, realMouseLoc.y)) == false
                        && status == windowStatuses::base){
                         //check if mouse is in the area of a box
                         //if yes, select that box
-                        short boxIndex = c.isInBox(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                        short boxIndex = c.isInBox(relativeMouseLoc.x, relativeMouseLoc.y);
                         if(boxIndex != -1){
                             c.selectBox(boxIndex);
                         }else{
@@ -316,7 +329,7 @@ int main(){
 
                         //check if mouse is in the area of a bucket
                         //if yes, select that box
-                        short buckIndex = c.isInBucket(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                        short buckIndex = c.isInBucket(relativeMouseLoc.x, relativeMouseLoc.y);
                         if(buckIndex != -1){
                             c.selectBucket(buckIndex);
                         }else{
@@ -331,19 +344,27 @@ int main(){
                     ss.str(std::string());
                     ss << sf::Mouse::getPosition(window).y;
                     my.setString(ss.str());
+
+                    ss.str(std::string());
+                    ss << relativeMouseLoc.x;
+                    mx2.setString(ss.str());
+
+                    ss.str(std::string());
+                    ss << relativeMouseLoc.y;
+                    my2.setString(ss.str());
                 }
             }else{ //if the key isn't pressed, set the key's flag to false
                 leftMousePressed = false;
             }
 
             if(status == windowStatuses::added){
-                vwindow->close();
+                vwindow->destroy();
 
                 //reset status
                 status = windowStatuses::base;
             }else
             if(status == windowStatuses::edited){
-                vwindow->close();
+                vwindow->destroy();
 
                 //reset status
                 status = windowStatuses::base;
@@ -359,9 +380,10 @@ int main(){
         for(unsigned short i = 0; i < c.getBoxRectObjects().size(); i++){
             window.draw(c.getBoxRectObjects().at(i));
         }
-        for(unsigned short i = 0; i < c.getBoxTextObjects().size(); i++){
+        /*for(unsigned short i = 0; i < c.getBoxTextObjects().size(); i++){
             window.draw(c.getBoxTextObjects().at(i));
-        }
+        }*/
+        c.getBoxTextObjects()->draw();
         for(unsigned short i = 0; i < c.getQueueRectObjects().size(); i++){
             window.draw(c.getQueueRectObjects().at(i));
         }
@@ -371,6 +393,8 @@ int main(){
 
         window.draw(mx);
         window.draw(my);
+        window.draw(mx2);
+        window.draw(my2);
 
         gui.draw();
 

@@ -150,3 +150,30 @@
 		some commented out code removed
 		some MACROs reorganized
 		default flavor text added to vwindow
+17th of May [10:37AM] - first functional prototype created
+	minor bug fix
+		using the close button on the vwindow safely usable 
+		close button usage previously broke the status system
+	saved completed Alpha 0.2.3 directory remotely
+	UPDATE: functional prototype saved is a non-stable build
+		vwindow bug fix was not implemented properly and caused more issues
+		new issues still pertained to vwindow closing events
+		errors addressed and fixed
+17th of May [2:22PM] - bug safari and formatting
+	as stated, errors with vwindow closing event issues
+		'OK', 'Cancel', and the close button all close the window
+	fixed issue with window resizing
+		main now tracks both 'real' and 'relative' mouse position
+		relative mouse coordinates displayed in green on each mouse click
+	changed boxTextObjects in Controller
+		data type altered from vector<sf::Text> to tgui::Gui
+		createBoxObjects() fills gui with functionally similar tgui::Labels
+		Controller.h declaration and getter updated accordingly
+		updateBoxObjects() updated
+		main window drawing code changed to accommodate for transition
+		setRengerTarget added in Controller to accommodate for transition
+	comboBox in vwindow now pulls box names directly from boxes
+	box names now centered in boxes on display window
+	boxes now touch and cover full upper half of the screen
+		box size MACROs and box location MACROs added in Controller.h
+	updated functional prototype directory to current project version

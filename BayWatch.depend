@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1558044468 source:c:\users\cookie cat\documents\baywatch\main.cpp
+1558125789 source:c:\users\cookie cat\documents\baywatch\main.cpp
 	<TGUI/TGUI.hpp>
 	<SFML/Graphics.hpp>
 	<string>
@@ -41,10 +41,15 @@
 	"ticket.h"
 	"rect.h"
 
-1558046181 source:c:\users\cookie cat\documents\baywatch\controller.cpp
+1558126161 source:c:\users\cookie cat\documents\baywatch\controller.cpp
 	<vector>
 	<string>
 	<sstream>
+	<iostream>
+	<memory>
+	<TGUI/Gui.hpp>
+	<TGUI/Renderers/LabelRenderer.hpp>
+	<TGUI/Widgets/Label.hpp>
 	<SFML/Graphics/RectangleShape.hpp>
 	<SFML/Graphics/Text.hpp>
 	"data.h"
@@ -52,8 +57,9 @@
 	"ticketbucket.h"
 	"controller.h"
 
-1558045611 c:\users\cookie cat\documents\baywatch\controller.h
+1558126368 c:\users\cookie cat\documents\baywatch\controller.h
 	<vector>
+	<TGUI/Gui.hpp>
 	<SFML/Graphics/RectangleShape.hpp>
 	<SFML/Graphics/Text.hpp>
 	"box.h"

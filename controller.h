@@ -1,4 +1,5 @@
 #include <vector>
+#include <TGUI/Gui.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include "box.h"
@@ -8,6 +9,10 @@
 #define CONTROLLER
 
 #define TEXT_LINE_SPACING_15 20.f
+#define BOX_X_ZERO_POINT 5
+#define BOX_Y_ZERO_POINT 27.f
+#define BOX_WIDTH 230
+#define BOX_HEIGHT 350
 #define QUEUE_TICKET_LIMIT 10
 #define QUEUE_X_ZERO_POINT 0
 #define QUEUE_Y_ZERO_POINT 400
@@ -20,7 +25,7 @@ private:
     std::vector<Box> boxList;
     std::vector<TicketBucket> ticketQueue; //MAIN QUEUE OF TICKETS; ALL TICKETS HOULD BE STORED IN MEMORY HERE
 
-    std::vector<sf::Text> boxTextObjects;
+    tgui::Gui boxTextObjects;
     std::vector<sf::RectangleShape> boxRectObjects;
     std::vector<sf::Text> queueTextObjects;
     std::vector<sf::RectangleShape> queueRectObjects;
@@ -34,10 +39,12 @@ private:
 public:
     Controller();
 
+    void setRenderTarget(sf::RenderTarget &target);
+
     std::vector<Box>* getBoxList();
     std::vector<TicketBucket>* getTicketQueue();
 
-    std::vector<sf::Text> getBoxTextObjects();
+    tgui::Gui* getBoxTextObjects();
     std::vector<sf::RectangleShape> getBoxRectObjects();
     std::vector<sf::Text> getQueueTextObjects();
     std::vector<sf::RectangleShape> getQueueRectObjects();
