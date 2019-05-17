@@ -177,3 +177,7 @@
 	boxes now touch and cover full upper half of the screen
 		box size MACROs and box location MACROs added in Controller.h
 	updated functional prototype directory to current project version
+17th of May [4:16PM]
+	increased font size of box labels to 27
+	increased font sizes of ticket id and vehicle labels to 21
+	moved real/relative mouse location displays to bottom-right corner of window

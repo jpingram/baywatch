@@ -295,9 +295,9 @@ void Controller::createBoxObjects(){
             //BAY LABEL
             auto label = tgui::Label::create();
             label->setText("Bay:");
-            label->setTextSize(15);
+            label->setTextSize(27);
             label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY());
-            label->setSize(tgui::Layout2d(tgui::Vector2f(BOX_WIDTH, TEXT_LINE_SPACING_15)));
+            label->setSize(tgui::Layout2d(tgui::Vector2f(BOX_WIDTH, TEXT_LINE_SPACING_27)));
             label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
             label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
             ss.str(std::string());
@@ -307,8 +307,8 @@ void Controller::createBoxObjects(){
             //TICKET ID
             label = tgui::Label::create();
             label->setText("Bay:");
-            label->setTextSize(15);
-            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + TEXT_LINE_SPACING_15);
+            label->setTextSize(21);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 2*TEXT_LINE_SPACING_21);
             label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
             ss.str(std::string());
             ss << "idLabel" << i;
@@ -317,8 +317,8 @@ void Controller::createBoxObjects(){
             //VEHICLE INFO
             label = tgui::Label::create();
             label->setText("Bay:");
-            label->setTextSize(15);
-            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 2*TEXT_LINE_SPACING_15);
+            label->setTextSize(21);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 3*TEXT_LINE_SPACING_21);
             label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
             ss.str(std::string());
             ss << "vLabel" << i;

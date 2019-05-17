@@ -9,6 +9,9 @@
 #define CONTROLLER
 
 #define TEXT_LINE_SPACING_15 20.f
+#define TEXT_LINE_SPACING_21 28.f
+#define TEXT_LINE_SPACING_24 32.f
+#define TEXT_LINE_SPACING_27 36.f
 #define BOX_X_ZERO_POINT 5
 #define BOX_Y_ZERO_POINT 27.f
 #define BOX_WIDTH 230

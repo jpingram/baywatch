@@ -262,25 +262,25 @@ int main(){
     mx.setFillColor(yellowish);
     mx.setFont(freeroadR);
     mx.setCharacterSize(15);
-    mx.setPosition(0, 0 + TEXT_LINE_SPACING_15);
+    mx.setPosition(MAIN_WINDOW_WIDTH - 50, MAIN_WINDOW_HEIGHT - 4*TEXT_LINE_SPACING_15);
 
     sf::Text my;
     my.setFillColor(darkYellowish);
     my.setFont(freeroadR);
     my.setCharacterSize(15);
-    my.setPosition(0, 0 + 2*TEXT_LINE_SPACING_15);
+    my.setPosition(MAIN_WINDOW_WIDTH - 50, MAIN_WINDOW_HEIGHT - 3*TEXT_LINE_SPACING_15);
 
     sf::Text mx2;
     mx2.setFillColor(greenish);
     mx2.setFont(freeroadR);
     mx2.setCharacterSize(15);
-    mx2.setPosition(0, 0 + 3*TEXT_LINE_SPACING_15);
+    mx2.setPosition(MAIN_WINDOW_WIDTH - 50, MAIN_WINDOW_HEIGHT - 2*TEXT_LINE_SPACING_15);
 
     sf::Text my2;
     my2.setFillColor(darkGreenish);
     my2.setFont(freeroadR);
     my2.setCharacterSize(15);
-    my2.setPosition(0, 0 + 4*TEXT_LINE_SPACING_15);
+    my2.setPosition(MAIN_WINDOW_WIDTH - 50, MAIN_WINDOW_HEIGHT - TEXT_LINE_SPACING_15);
 
     while(window.isOpen()){
         //EVENT OBJECT AND EVENT POLLING LOOP
