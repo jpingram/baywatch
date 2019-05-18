@@ -177,7 +177,27 @@
 	boxes now touch and cover full upper half of the screen
 		box size MACROs and box location MACROs added in Controller.h
 	updated functional prototype directory to current project version
-17th of May [4:16PM]
+17th of May [4:16PM] - more formatting
 	increased font size of box labels to 27
 	increased font sizes of ticket id and vehicle labels to 21
 	moved real/relative mouse location displays to bottom-right corner of window
+18th of May [3:21PM] - Alpha 0.4 initiated, main goals: bay menu, timers
+	installed a "time-of-life" system for ticket buckets
+		imported <chrono>
+		added a time_stamp object in Controller to track current time
+		updated Controller::update() to update time_stamp
+		added birthPoint time_stamp in TicketBucket
+			defined by steady_clock::now() in constructor
+			TicketBucket::setBirthPoint() created as back-up
+		added TicketBucket::getTimeSinceBirthAsString()
+			returns time elapsed as "#h #m #s"
+		queueTextObjects now include time-of-life string
+	added a boxTextObject that displays when there are vehicles waiting for a bay
+		displays as "Vehicles Waiting: x"
+		where x = the number of waiting vehicles in box's queue
+	added "Bay" in menu
+		"Edit" option
+			allows user to edit the label of a selected box
+	fixed minor bug in vwindow closing/"Cancel" event
+		added "closed" window status
+		removed all calls to vwindow->destroy() from the vwindow itself

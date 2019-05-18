@@ -1,13 +1,17 @@
+#include <chrono>
+#include <string>
+#include <sstream>
 #include "ticket.h"
 #include "ticketbucket.h"
 
-TicketBucket::TicketBucket():ticket(), boxNum(), selected(false){};
+TicketBucket::TicketBucket():ticket(), boxNum(), selected(false),
+        birthPoint(std::chrono::steady_clock::now()){};
 
 TicketBucket::TicketBucket(std::string newID, std::string newV, std::string newN):
-        ticket(newID, newV, newN), boxNum(), selected(false){};
+        ticket(newID, newV, newN), boxNum(), selected(false), birthPoint(std::chrono::steady_clock::now()){};
 
 TicketBucket::TicketBucket(std::string newID, std::string newV, std::string newN, short s):
-        ticket(newID, newV, newN), boxNum(s), selected(false){};
+        ticket(newID, newV, newN), boxNum(s), selected(false), birthPoint(std::chrono::steady_clock::now()){};
 
 void TicketBucket::updateTicket(std::string newID, std::string newV, std::string newN){
     ticket.setID(newID);
@@ -33,4 +37,27 @@ short TicketBucket::getBoxNum(){
 
 bool TicketBucket::isSelected(){
     return selected;
+};
+
+void TicketBucket::setBirthPoint(std::chrono::steady_clock::time_point p){
+    birthPoint = p;
+};
+
+std::string TicketBucket::getTimeSinceBirthAsString(std::chrono::steady_clock::time_point p){
+    std::stringstream ss;
+
+    //generate the lifespan duration of the bucket and generate the related data
+    std::chrono::duration<int> lifespan = std::chrono::duration_cast<std::chrono::duration<int>>(p - birthPoint);
+    int hours = lifespan.count() * std::chrono::hours::period::den / std::chrono::hours::period::num;
+    int minutes = (lifespan.count() * std::chrono::minutes::period::den / std::chrono::minutes::period::num)%60;
+    int seconds = lifespan.count() % 60;
+
+    //depending on length of lifespan, add the duration data to the string stream
+    if(hours > 0){
+        ss << hours << "h ";
+    }
+    ss << minutes << "m " << seconds << "s";
+
+    //return the final string
+    return ss.str();
 };

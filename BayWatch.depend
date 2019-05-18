@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1558125789 source:c:\users\cookie cat\documents\baywatch\main.cpp
+1558216840 source:c:\users\cookie cat\documents\baywatch\main.cpp
 	<TGUI/TGUI.hpp>
 	<SFML/Graphics.hpp>
 	<string>
@@ -41,13 +41,16 @@
 	"ticket.h"
 	"rect.h"
 
-1558126161 source:c:\users\cookie cat\documents\baywatch\controller.cpp
+1558214233 source:c:\users\cookie cat\documents\baywatch\controller.cpp
 	<vector>
 	<string>
 	<sstream>
 	<iostream>
 	<memory>
+	<chrono>
 	<TGUI/Gui.hpp>
+	<TGUI/Layout.hpp>
+	<TGUI/Vector2f.hpp>
 	<TGUI/Renderers/LabelRenderer.hpp>
 	<TGUI/Widgets/Label.hpp>
 	<SFML/Graphics/RectangleShape.hpp>
@@ -57,19 +60,24 @@
 	"ticketbucket.h"
 	"controller.h"
 
-1558133766 c:\users\cookie cat\documents\baywatch\controller.h
+1558207998 c:\users\cookie cat\documents\baywatch\controller.h
 	<vector>
+	<chrono>
 	<TGUI/Gui.hpp>
 	<SFML/Graphics/RectangleShape.hpp>
 	<SFML/Graphics/Text.hpp>
 	"box.h"
 	"ticketbucket.h"
 
-1557251349 c:\users\cookie cat\documents\baywatch\ticketbucket.h
+1558208774 c:\users\cookie cat\documents\baywatch\ticketbucket.h
 	<string>
+	<chrono>
 	"ticket.h"
 
-1557251364 source:c:\users\cookie cat\documents\baywatch\ticketbucket.cpp
+1558210353 source:c:\users\cookie cat\documents\baywatch\ticketbucket.cpp
+	<chrono>
+	<string>
+	<sstream>
 	"ticket.h"
 	"ticketbucket.h"
 

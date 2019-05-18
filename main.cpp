@@ -15,7 +15,7 @@
 #define selectedBox c.getBoxList()->at(c.getSelectedBox())
 #define selectedBucket c.getTicketQueue()->at(c.getSelectedBucket())
 
-enum windowStatuses{base, add, added, edit, edited, cancelled};
+enum windowStatuses{base, add, added, edit, bedit, edited, cancelled, closed};
 enum windowType{a, e};
 static unsigned short status = windowStatuses::base;
 
@@ -33,8 +33,7 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
             child->setTitle("Edit Ticket Info");
         }
         child->connect("closed", [&](){
-            status = windowStatuses::base;
-            child->destroy();
+            status = windowStatuses::closed;
         });
         gui.add(child, "child");
 
@@ -177,6 +176,70 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         button->setText("Cancel");
         button->setSize(100, 30);
         button->connect("pressed", [=](){
+            status = windowStatuses::closed;
+        });
+        child->add(button);
+    }
+    catch (const tgui::Exception& e)
+    {
+        std::cerr << "TGUI Exception in newVehicleWindow(): " << e.what() << std::endl;
+        //return EXIT_FAILURE;
+    }
+};
+
+void newBayWindow(tgui::Gui& gui, Controller& c){
+    try{
+        //CHILDWINDOW
+        auto child = tgui::ChildWindow::create();
+        //child->setRenderer(theme.getRenderer("ChildWindow"));
+        child->setSize(500, 100);
+        child->setPosition(200, 200);
+        child->setTitle("Edit Bay Info");
+        child->connect("closed", [&](){
+            status = windowStatuses::closed;
+        });
+        gui.add(child, "child");
+
+        //LABEL
+        auto label = tgui::Label::create();
+        //label->setRenderer(theme.getRenderer("Label"));
+        label->setText("Bay Label:");
+        label->setPosition(10, 30);
+        label->setTextSize(15);
+        child->add(label, "idLabel");
+
+        //EDITBOX
+        auto editBox = tgui::EditBox::create();
+        //editBox->setRenderer(theme.getRenderer("EditBox"));
+        editBox->setSize(365, 25);
+        editBox->setTextSize(18);
+        editBox->setPosition(125, 30);
+        if(c.getSelectedBox() >= 0){
+            editBox->setText(selectedBox.getLabel());
+        }else{
+            editBox->setDefaultText("ERROR: invalid selection");
+        }
+        child->add(editBox, "idInput");
+
+        //BUTTON
+        auto button = tgui::Button::create();
+        //button->setRenderer(theme.getRenderer("Button"));
+        button->setPosition(125, 60);
+        button->setText("OK");
+        button->setSize(100, 30);
+        button->connect("pressed", [&]() {
+            selectedBox.setLabel(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString());
+            status = windowStatuses::edited;
+        });
+        child->add(button);
+
+        //BUTTON
+        button = tgui::Button::create();
+        //button->setRenderer(theme.getRenderer("Button"));
+        button->setPosition(275, 60);
+        button->setText("Cancel");
+        button->setSize(100, 30);
+        button->connect("pressed", [=](){
             status = windowStatuses::base;
             child->destroy();
         });
@@ -184,14 +247,14 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
     }
     catch (const tgui::Exception& e)
     {
-        std::cerr << "TGUI Exception: " << e.what() << std::endl;
+        std::cerr << "TGUI Exception in newBayWindow(): " << e.what() << std::endl;
         //return EXIT_FAILURE;
     }
 };
 
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.3");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.4");
 
     //window focus boolean
     bool hasFocus = true;
@@ -238,6 +301,21 @@ int main(){
                     c.removeTicket(c.getSelectedBucket());
                 }else{
                     std::cerr << "'Remove' error: no bucket selected" << std::endl;
+                }
+            }
+        });
+
+
+        menu->addMenu("Bay");
+
+        menu->addMenuItem("Edit");
+        menu->connectMenuItem({"Bay", "Edit"}, [&](){
+            if(status == windowStatuses::base){
+                if(c.getSelectedBox() >= 0){
+                    newBayWindow(gui, c);
+                    status = windowStatuses::bedit;
+                }else{
+                    std::cerr << "bwindow 'Edit' build error: no bay selected" << std::endl;
                 }
             }
         });
@@ -364,6 +442,12 @@ int main(){
                 status = windowStatuses::base;
             }else
             if(status == windowStatuses::edited){
+                vwindow->destroy();
+
+                //reset status
+                status = windowStatuses::base;
+            }else
+            if(status == windowStatuses::closed){
                 vwindow->destroy();
 
                 //reset status

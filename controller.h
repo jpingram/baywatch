@@ -1,4 +1,5 @@
 #include <vector>
+#include <chrono>
 #include <TGUI/Gui.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -21,6 +22,8 @@
 #define QUEUE_Y_ZERO_POINT 400
 #define QUEUE_WIDTH 1200
 
+#define clock std::chrono::steady_clock
+
 enum conStatuses{noneSelected, boxSelected, bucketSelected};
 
 class Controller{
@@ -36,6 +39,8 @@ private:
     unsigned short status;
     short selectedBox; //index of selected box in boxList vector, -1 if no box selected
     short selectedBucket;
+
+    clock::time_point currentTimePoint;
 
     sf::Font freeroadR;
     sf::Font freeroadB;

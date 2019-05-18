@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <memory>
+#include <chrono>
 #include <TGUI/Gui.hpp>
 #include <TGUI/Layout.hpp>
 #include <TGUI/Vector2f.hpp>
@@ -16,7 +17,8 @@
 #include "controller.h"
 
 Controller::Controller():boxList(), ticketQueue(), boxTextObjects(), boxRectObjects(),
-        queueTextObjects(), queueRectObjects(), status(0), selectedBox(-1), selectedBucket(-1){
+        queueTextObjects(), queueRectObjects(), status(0), selectedBox(-1), selectedBucket(-1),
+        currentTimePoint(clock::now()){
     //SET UP FONTS
     freeroadR.loadFromMemory(freeroadRegular, freeroadRegular_length);
     freeroadB.loadFromMemory(freeroadBold, freeroadBold_length);
@@ -257,12 +259,16 @@ void Controller::removeTicket(unsigned short s){
 };
 
 void Controller::update(){
+    //update time objects
+    currentTimePoint = clock::now();
+
+    //update display objects
     updateBoxObjects();
     updateQueueObjects();
 };
 
 void Controller::createBoxObjects(){
-    for(int i = 0; i < 5; i++){
+    for(unsigned short i = 0; i < 5; i++){
         std::stringstream ss;
         ss << "Bay" << (i+1);
         Box test(ss.str(), BOX_X_ZERO_POINT+(i*BOX_WIDTH)+(i*10), BOX_Y_ZERO_POINT, BOX_WIDTH, BOX_HEIGHT);
@@ -322,6 +328,18 @@ void Controller::createBoxObjects(){
             label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
             ss.str(std::string());
             ss << "vLabel" << i;
+            boxTextObjects.add(label, ss.str());
+
+            //VEHICLE WAITING INFO
+            label = tgui::Label::create();
+            label->setText("");
+            label->setTextSize(21);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + BOX_HEIGHT - TEXT_LINE_SPACING_21);
+            label->setSize(tgui::Layout2d(tgui::Vector2f(BOX_WIDTH, TEXT_LINE_SPACING_21)));
+            label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+            label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+            ss.str(std::string());
+            ss << "vwLabel" << i;
             boxTextObjects.add(label, ss.str());
         }catch(const tgui::Exception &e){
             std::cerr << "TGUI Exception in Controller::createBoxObjects(): " << e.what() << std::endl;
@@ -402,6 +420,19 @@ void Controller::updateBoxObjects(){
         }else{
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getTickets()[0]->getVehicle());
         }
+
+        ss.str(std::string());
+        ss << "vwLabel" << i;
+        if(boxList[i].getTickets().size() > 1){
+            std::string temp = ss.str(); //holds the name of the vwLabel for later use
+            ss.str(std::string());
+            ss << "Vehicles Waiting: " << boxList[i].getTickets().size()-1;
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(temp))
+                ->setText(ss.str());
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->setText("");
+        }
     }
 };
 
@@ -436,7 +467,8 @@ void Controller::updateQueueObjects(){
 
         ss.str(std::string());
         ss << (i+1) << ": " << ticketQueue[i].getTicket()->getID() << " - " <<ticketQueue[i].getTicket()->getVehicle() <<
-            " - " << ticketQueue[i].getTicket()->getNotes();
+            " - " << ticketQueue[i].getTicket()->getNotes() <<
+            " - " << ticketQueue[i].getTimeSinceBirthAsString(currentTimePoint);
         queueTextObjects[i].setString(ss.str());
         i++;
     }
