@@ -201,3 +201,36 @@
 	fixed minor bug in vwindow closing/"Cancel" event
 		added "closed" window status
 		removed all calls to vwindow->destroy() from the vwindow itself
+20th of May - [3:28PM]
+	added timer to Box
+		'activeStartPoint' time_point object
+		added getter and setter for activeStartPoint
+		activeStartPoint resets when 'true' is passed to Box::setActive()
+		boxTextObject created to display time since Box was activated
+		'active' status in Box now affected by number of tickets in queue
+			true if tickets exist in queue
+			false if ticket queue in box is empty
+	added 'active' status boolean to TicketBucket
+		added getter and setter for 'active'
+		no current use
+	new options under "Bay" in menu
+		"Clear Active Ticket" option
+			clears the ticket currently at front of queue in selected box
+			finds bucket of currently active ticket in box
+			sets boxNum in that ticket's bucket to -1
+			by extension, erases ticket object from selected box's queue
+		"Clear All Tickets" option
+			clears all tickets in selected box
+			same fashion as "Clear Active Ticket"
+	added new helper functions
+		short Controller::getBucketIndexById(std::string id);
+		void Controller::removeActiveTicketFromBox(unsigned short s);
+    		void Controller::removeAllTicketsFromBox(unsigned short s);
+		void Box::removeTicketByIndex(unsigned short s);
+		std::string Box::getTimeSinceActiveAsString([time_point] p);
+	queueTextObjects now display label of current box 
+		(index of box denoted by boxNum of bucket)
+	updated "Ticket" -> "Edit" in menu 
+		now allows to edit active ticket of selected box
+	updated "Ticket" -> "New" in menu
+		'bayLabel' comboBox value now defaults to selected box, if applicable

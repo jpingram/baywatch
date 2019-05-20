@@ -4,14 +4,14 @@
 #include "ticket.h"
 #include "ticketbucket.h"
 
-TicketBucket::TicketBucket():ticket(), boxNum(), selected(false),
+TicketBucket::TicketBucket():ticket(), boxNum(), selected(false), active(false),
         birthPoint(std::chrono::steady_clock::now()){};
 
 TicketBucket::TicketBucket(std::string newID, std::string newV, std::string newN):
-        ticket(newID, newV, newN), boxNum(), selected(false), birthPoint(std::chrono::steady_clock::now()){};
+        ticket(newID, newV, newN), boxNum(), selected(false), active(false), birthPoint(std::chrono::steady_clock::now()){};
 
 TicketBucket::TicketBucket(std::string newID, std::string newV, std::string newN, short s):
-        ticket(newID, newV, newN), boxNum(s), selected(false), birthPoint(std::chrono::steady_clock::now()){};
+        ticket(newID, newV, newN), boxNum(s), selected(false), active(false), birthPoint(std::chrono::steady_clock::now()){};
 
 void TicketBucket::updateTicket(std::string newID, std::string newV, std::string newN){
     ticket.setID(newID);
@@ -27,6 +27,10 @@ void TicketBucket::setSelected(bool b){
     selected = b;
 };
 
+void TicketBucket::setActive(bool b){
+    active = b;
+};
+
 Ticket* TicketBucket::getTicket(){
     return &ticket;
 };
@@ -37,6 +41,10 @@ short TicketBucket::getBoxNum(){
 
 bool TicketBucket::isSelected(){
     return selected;
+};
+
+bool TicketBucket::isActive(){
+    return active;
 };
 
 void TicketBucket::setBirthPoint(std::chrono::steady_clock::time_point p){

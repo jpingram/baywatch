@@ -130,6 +130,9 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
             comboBox->addItem(c.getBoxList()->at(i).getLabel());
         }
         comboBox->setSelectedItem("[none]");
+        if(c.getSelectedBox() >= 0){
+            comboBox->setSelectedItemByIndex(c.getSelectedBox() + 1);
+        }
         if(t == windowType::e){
             if(c.getSelectedBucket() >= 0){
                 comboBox->setSelectedItemByIndex(selectedBucket.getBoxNum() + 1);
@@ -288,6 +291,19 @@ int main(){
                 if(c.getSelectedBucket() >= 0){
                     newVehicleWindow(gui, c, windowType::e);
                     status = windowStatuses::edit;
+                }
+                if(c.getSelectedBox() >= 0){
+                    if(!selectedBox.getTickets().empty()){
+                        //set the selected bucket
+                        c.selectBucket(c.getBucketIndexById(selectedBox.getTickets().at(0)->getID()));
+                        c.deselectBox();
+
+                        //call the vwindow like with a regularly selected bucket
+                        newVehicleWindow(gui, c, windowType::e);
+                        status = windowStatuses::edit;
+                    }else{
+                        std::cerr << "vwindow 'Edit' build error: no bucket selected" << std::endl;
+                    }
                 }else{
                     std::cerr << "vwindow 'Edit' build error: no bucket selected" << std::endl;
                 }
@@ -316,6 +332,28 @@ int main(){
                     status = windowStatuses::bedit;
                 }else{
                     std::cerr << "bwindow 'Edit' build error: no bay selected" << std::endl;
+                }
+            }
+        });
+
+        menu->addMenuItem("Clear Active Ticket");
+        menu->connectMenuItem({"Bay", "Clear Active Ticket"}, [&](){
+            if(status == windowStatuses::base){
+                if(c.getSelectedBox() >= 0){
+                    c.removeActiveTicketFromBox(c.getSelectedBox());
+                }else{
+                    std::cerr << "'Clear Active Ticket' error: no bay selected" << std::endl;
+                }
+            }
+        });
+
+        menu->addMenuItem("Clear All Tickets");
+        menu->connectMenuItem({"Bay", "Clear All Tickets"}, [&](){
+            if(status == windowStatuses::base){
+                if(c.getSelectedBox() >= 0){
+                    c.removeAllTicketsFromBox(c.getSelectedBox());
+                }else{
+                    std::cerr << "'Clear All Tickets' error: no bay selected" << std::endl;
                 }
             }
         });

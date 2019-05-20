@@ -156,6 +156,17 @@ short Controller::getSelectedBucket(){
     return selectedBucket;
 };
 
+//returns index of bucket in ticketQueue or -1 if no bucket with matching id is found
+short Controller::getBucketIndexById(std::string id){
+    for(unsigned short i = 0; i < ticketQueue.size(); i++){
+        if(id.compare(ticketQueue.at(i).getTicket()->getID()) == 0){
+            return i;
+        }
+    }
+
+    return -1;
+};
+
 //TICKET RULES
 //  -all ticket IDs must be unique for ticket to be added
 //  -also boxNum values must be between [-1, boxList.size())
@@ -202,6 +213,8 @@ void Controller::setBoxNum(unsigned short index, short newBox){
     //  change boxNum value in bucket
     //  add ticket to box at boxList[newBox]
     if(index >= -1 && index < (short)ticketQueue.size()){
+        //std::chrono::steady_clock::time_point tp(currentTimePoint); //used to store old box timer info if applicable
+
         if(ticketQueue[index].getBoxNum() != -1){
             //if the bucket is already assigned to the target box, abort
             if(ticketQueue[index].getBoxNum() == newBox){
@@ -209,6 +222,7 @@ void Controller::setBoxNum(unsigned short index, short newBox){
             }
 
             //else, remove target ticket from it's current box
+            //tp = boxList[ticketQueue[index].getBoxNum()].getActiveStartPoint();
             boxList[ticketQueue[index].getBoxNum()].removeTicket(ticketQueue[index].getTicket()->getID());
         }
 
@@ -218,6 +232,7 @@ void Controller::setBoxNum(unsigned short index, short newBox){
         if(newBox != -1){
             Ticket* t = ticketQueue[index].getTicket();
             boxList[newBox].addTicket(t->getID(), t->getVehicle(), t->getNotes(), newBox);
+            //boxList[newBox].setActiveStartPoint(tp);
         }
     }
 
@@ -255,6 +270,32 @@ void Controller::removeTicket(unsigned short s){
             boxList[ticketQueue[s].getBoxNum()].removeTicket(ticketQueue[s].getTicket()->getID());
         }
         ticketQueue.erase(ticketQueue.begin()+s);
+    }
+};
+
+void Controller::removeActiveTicketFromBox(unsigned short s){
+    if(s >= 0 && s < boxList.size()){
+        if(!boxList[s].getTickets().empty()){
+            //assign bucket of ticket in question to box -1 (none)
+            //this also removes ticket object from box (see setBoxNum())
+            short bucketIndex = getBucketIndexById(boxList[s].getTickets().at(0)->getID());
+            if(bucketIndex >= 0){ //check to make sure bucket was actually found
+                setBoxNum(bucketIndex, -1);
+            }
+        }
+    }
+};
+
+void Controller::removeAllTicketsFromBox(unsigned short s){
+    if(s >= 0 && s < boxList.size()){
+        while(!boxList[s].getTickets().empty()){
+            //assign bucket of ticket in question to box -1 (none)
+            //this also removes ticket object from box (see setBoxNum())
+            short bucketIndex = getBucketIndexById(boxList[s].getTickets().at(0)->getID());
+            if(bucketIndex >= 0){ //check to make sure bucket was actually found
+                setBoxNum(bucketIndex, -1);
+            }
+        }
     }
 };
 
@@ -340,6 +381,18 @@ void Controller::createBoxObjects(){
             label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
             ss.str(std::string());
             ss << "vwLabel" << i;
+            boxTextObjects.add(label, ss.str());
+
+            //BOX TIMER INFO
+            label = tgui::Label::create();
+            label->setText("");
+            label->setTextSize(21);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + BOX_HEIGHT - 2*TEXT_LINE_SPACING_21);
+            label->setSize(tgui::Layout2d(tgui::Vector2f(BOX_WIDTH, TEXT_LINE_SPACING_21)));
+            label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+            label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+            ss.str(std::string());
+            ss << "timeLabel" << i;
             boxTextObjects.add(label, ss.str());
         }catch(const tgui::Exception &e){
             std::cerr << "TGUI Exception in Controller::createBoxObjects(): " << e.what() << std::endl;
@@ -433,6 +486,19 @@ void Controller::updateBoxObjects(){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->setText("");
         }
+
+        ss.str(std::string());
+        ss << "timeLabel" << i;
+        if(boxList[i].isActive()){
+            std::string temp = ss.str(); //holds the name of the timeLabel for later use
+            ss.str(std::string());
+            ss << "Bay Active: " << boxList[i].getTimeSinceActiveAsString(currentTimePoint);
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(temp))
+                ->setText(ss.str());
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->setText("");
+        }
     }
 };
 
@@ -466,7 +532,11 @@ void Controller::updateQueueObjects(){
         }
 
         ss.str(std::string());
-        ss << (i+1) << ": " << ticketQueue[i].getTicket()->getID() << " - " <<ticketQueue[i].getTicket()->getVehicle() <<
+        ss << (i+1);
+        if(ticketQueue[i].getBoxNum() >= 0){
+            ss << " [" << boxList[ticketQueue[i].getBoxNum()].getLabel() << "]";
+        }
+        ss << ": " << ticketQueue[i].getTicket()->getID() << " - " <<ticketQueue[i].getTicket()->getVehicle() <<
             " - " << ticketQueue[i].getTicket()->getNotes() <<
             " - " << ticketQueue[i].getTimeSinceBirthAsString(currentTimePoint);
         queueTextObjects[i].setString(ss.str());
