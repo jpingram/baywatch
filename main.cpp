@@ -18,6 +18,7 @@
 enum windowStatuses{base, add, added, edit, bedit, edited, cancelled, closed};
 enum windowType{a, e};
 static unsigned short status = windowStatuses::base;
+//static bool bayDisplayActive = false;
 
 void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
     try{
@@ -255,9 +256,24 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
     }
 };
 
+void openBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
+    target.create(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.4.3 Bay Display");
+
+    menubar->setMenuItemEnabled("Window", "Show Bay Display Window", false);
+    menubar->setMenuItemEnabled("Window", "Close Bay Display Window", true);
+}
+
+void closeBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
+    target.close();
+
+    menubar->setMenuItemEnabled("Window", "Show Bay Display Window", true);
+    menubar->setMenuItemEnabled("Window", "Close Bay Display Window", false);
+}
+
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.4");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.4.3");
+    sf::RenderWindow window2;
 
     //window focus boolean
     bool hasFocus = true;
@@ -358,6 +374,20 @@ int main(){
             }
         });
 
+        menu->addMenu("Window");
+        menu->addMenuItem("Show Bay Display Window");
+        menu->connectMenuItem({"Window", "Show Bay Display Window"}, [&](){
+            openBayDisplayWindow(window2, gui);
+        });
+
+        menu->addMenuItem("Close Bay Display Window");
+        menu->connectMenuItem({"Window", "Close Bay Display Window"}, [&](){
+            closeBayDisplayWindow(window2, gui);
+        });
+
+        menu->setMenuItemEnabled("Window", "Show Bay Display Window", true);
+        menu->setMenuItemEnabled("Window", "Close Bay Display Window", false);
+
         gui.add(menu, "menu");
     }
     catch (const tgui::Exception& e)
@@ -404,6 +434,9 @@ int main(){
         while(window.pollEvent(event)){
             //WINDOW CLOSE EVENT, activated on pressing the close button
             if (event.type == sf::Event::Closed){
+                if(window2.isOpen()){
+                    closeBayDisplayWindow(window2, gui);
+                }
                 window.close();
                 return EXIT_SUCCESS;
             }
@@ -419,6 +452,17 @@ int main(){
             //GUI EVENT HANDLER
             gui.handleEvent(event);
         }//end while(window.pollEvent(event))
+
+        if(window2.isOpen()){
+            //EVENT OBJECT AND EVENT POLLING LOOP
+            sf::Event event;
+            while(window2.pollEvent(event)){
+                //WINDOW CLOSE EVENT, activated on pressing the close button
+                if (event.type == sf::Event::Closed){
+                    closeBayDisplayWindow(window2, gui);
+                }
+            }
+        }//end while(window2.pollEvent(event))
 
         //IF WINDOW HAS FOCUS, CHECK KEY INPUTS
         if(hasFocus){
@@ -505,12 +549,31 @@ int main(){
         /*for(unsigned short i = 0; i < c.getBoxTextObjects().size(); i++){
             window.draw(c.getBoxTextObjects().at(i));
         }*/
-        c.getBoxTextObjects()->draw();
         for(unsigned short i = 0; i < c.getQueueRectObjects().size(); i++){
             window.draw(c.getQueueRectObjects().at(i));
         }
         for(unsigned short i = 0; i < c.getQueueTextObjects().size(); i++){
             window.draw(c.getQueueTextObjects().at(i));
+        }
+
+        if(window2.isOpen()){
+            for(unsigned short i = 0; i < c.getBoxRectObjects().size(); i++){
+                window2.draw(c.getBoxRectObjects().at(i));
+            }
+            c.setRenderTarget(window2);
+            c.getBoxTextObjects()->draw();
+            c.setRenderTarget(window);
+            c.getBoxTextObjects()->draw();
+            for(unsigned short i = 0; i < c.getQueueRectObjects().size(); i++){
+                window2.draw(c.getQueueRectObjects().at(i));
+            }
+            for(unsigned short i = 0; i < c.getQueueTextObjects().size(); i++){
+                window2.draw(c.getQueueTextObjects().at(i));
+            }
+
+            window2.display();
+        }else{
+            c.getBoxTextObjects()->draw();
         }
 
         window.draw(mx);

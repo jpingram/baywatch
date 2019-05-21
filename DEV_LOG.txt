@@ -201,7 +201,7 @@
 	fixed minor bug in vwindow closing/"Cancel" event
 		added "closed" window status
 		removed all calls to vwindow->destroy() from the vwindow itself
-20th of May - [3:28PM]
+20th of May [3:28PM] - Alpha 0.4.2, more Bay menu options, bay timer added
 	added timer to Box
 		'activeStartPoint' time_point object
 		added getter and setter for activeStartPoint
@@ -234,3 +234,17 @@
 		now allows to edit active ticket of selected box
 	updated "Ticket" -> "New" in menu
 		'bayLabel' comboBox value now defaults to selected box, if applicable
+20th of May [5:29PM] - Alpha 0.4.3 - Bay Display Window!
+	added window2 object in main
+	added openBayDiplayWindow() and closeBayDisplayWindow in main
+	"Window" menu option
+		"Show Bay Display Window" & "Close Bay Display Window"
+			only one is active at a time
+			opens or closes the "bay display" window
+			depends on if window 2 is already open or not
+	window2, when open, shows clone of complete main window display
+		no box/bucket selection interactivity or GUI
+		can be made fullscreen (title bar still shows)
+	display does not update when dragging an SFML window
+		does not effect timers or main functionality
+	otherwise, no known errors
