@@ -6,6 +6,7 @@
 #include <memory>
 #include "data.h"
 #include "controller.h"
+#include "ticket.h"
 
 #define MAIN_WINDOW_WIDTH 1200
 #define MAIN_WINDOW_HEIGHT 600
@@ -14,10 +15,12 @@
 #define menubar std::dynamic_pointer_cast<tgui::MenuBar>(gui.get("menu"))
 #define selectedBox c.getBoxList()->at(c.getSelectedBox())
 #define selectedBucket c.getTicketQueue()->at(c.getSelectedBucket())
+#define MAX_DISPLAY_WINDOWS 2
 
 enum windowStatuses{base, add, added, edit, bedit, edited, cancelled, closed};
 enum windowType{a, e};
 static unsigned short status = windowStatuses::base;
+static unsigned short numDisplayWindows = 0;
 //static bool bayDisplayActive = false;
 
 void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
@@ -141,6 +144,14 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         }
         child->add(comboBox, "bayInput");
 
+        //LABEL
+        label = tgui::Label::create();
+        label->setText("");
+        label->setPosition(10, 175);
+        label->setTextSize(12);
+        label->getRenderer()->setTextColor(tgui::Color(sf::Color::Red));
+        child->add(label, "warningLabel");
+
         //BUTTON
         auto button = tgui::Button::create();
         //button->setRenderer(theme.getRenderer("Button"));
@@ -149,26 +160,72 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
         button->setSize(100, 30);
         if(t == windowType::a){
             button->connect("pressed", [&]() {
-                c.addTicket(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
-                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
-                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString(),
-                    (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
-                status = windowStatuses::added;
+                std::stringstream ss; //used to construct error messages
+                ss.str(std::string());
+
+                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString().compare("") == 0){
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))
+                        ->setText("Error: \"Ticket ID\" cannot be left blank.");
+                }else
+                if(c.getBucketIndexById(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))
+                                    ->getText().toAnsiString()) != -1){
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))
+                        ->setText("Error: \"Ticket ID\" is already being used.");
+                }else
+                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString()
+                                    .size() > VEHICLE_CHAR_LIMIT){
+                    ss << "Error: \"Vehicle Info\" can not be more than " << VEHICLE_CHAR_LIMIT << " characters.";
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))->setText(ss.str());
+                }else
+                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString()
+                                    .size() > NOTES_CHAR_LIMIT){
+                    ss << "Error: \"Notes\" can not be more than " << NOTES_CHAR_LIMIT << " characters.";
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))->setText(ss.str());
+                }else{
+                    c.addTicket(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText(),
+                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
+                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString(),
+                        (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
+                    status = windowStatuses::added;
+                }
             });
         }else
         if(t == windowType::e){
             button->connect("pressed", [&]() {
-                //NOTE: ORDER OF OERATIONS: box change relies on previous vehicle info
-                //  therefore, box change must happen first
-                //UPDATE: order doesn't matter with addition of updateTicket function in Controller
-                c.setBoxNum(c.getSelectedBucket(),
-                    (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
-                c.updateTicket(
-                    c.getSelectedBucket(),
-                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
-                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
-                    std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString());
-                status = windowStatuses::edited;
+                std::stringstream ss; //used to construct error messages
+                ss.str(std::string());
+
+                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString().compare("") == 0){
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))
+                        ->setText("Error: \"Ticket ID\" cannot be left blank.");
+                }else
+                if(c.getBucketIndexById(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))
+                                    ->getText().toAnsiString()) != -1){
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))
+                        ->setText("Error: \"Ticket ID\" is already being used.");
+                }else
+                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString()
+                                    .size() > VEHICLE_CHAR_LIMIT){
+                    ss << "Error: \"Vehicle Info\" can not be more than " << VEHICLE_CHAR_LIMIT << " characters.";
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))->setText(ss.str());
+                }else
+                if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString()
+                                    .size() > NOTES_CHAR_LIMIT){
+                    ss << "Error: \"Notes\" can not be more than " << NOTES_CHAR_LIMIT << " characters.";
+                    std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))->setText(ss.str());
+                }else{
+                    //NOTE: ORDER OF OERATIONS: box change relies on previous vehicle info
+                    //  therefore, box change must happen first
+                    //UPDATE: order doesn't matter with addition of updateTicket function in Controller
+                    c.setBoxNum(c.getSelectedBucket(),
+                        (std::dynamic_pointer_cast<tgui::ComboBox>(vwindow->get("bayInput"))->getSelectedItemIndex() - 1));
+                    c.updateTicket(
+                        c.getSelectedBucket(),
+                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))->getText().toAnsiString(),
+                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString(),
+                        std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("notesInput"))->getText().toAnsiString());
+                    status = windowStatuses::edited;
+                }
             });
         }
         child->add(button);
@@ -257,23 +314,36 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
 };
 
 void openBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
-    target.create(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.4.3 Bay Display");
+    target.create(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5 Bay Display");
 
-    menubar->setMenuItemEnabled("Window", "Show Bay Display Window", false);
+    numDisplayWindows++;
+
+    if(numDisplayWindows == MAX_DISPLAY_WINDOWS){
+        menubar->setMenuItemEnabled("Window", "Show Bay Display Window", false);
+    }else{
+        menubar->setMenuItemEnabled("Window", "Show Bay Display Window", true);
+    }
     menubar->setMenuItemEnabled("Window", "Close Bay Display Window", true);
 }
 
 void closeBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
     target.close();
 
+    numDisplayWindows--;
+
     menubar->setMenuItemEnabled("Window", "Show Bay Display Window", true);
-    menubar->setMenuItemEnabled("Window", "Close Bay Display Window", false);
+    if(numDisplayWindows == 0){
+        menubar->setMenuItemEnabled("Window", "Close Bay Display Window", false);
+    }else{
+        menubar->setMenuItemEnabled("Window", "Close Bay Display Window", true);
+    }
 }
 
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.4.3");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5");
     sf::RenderWindow window2;
+    sf::RenderWindow window3;
 
     //window focus boolean
     bool hasFocus = true;
@@ -377,12 +447,22 @@ int main(){
         menu->addMenu("Window");
         menu->addMenuItem("Show Bay Display Window");
         menu->connectMenuItem({"Window", "Show Bay Display Window"}, [&](){
-            openBayDisplayWindow(window2, gui);
+            if(!window2.isOpen()){
+                openBayDisplayWindow(window2, gui);
+            }else
+            if(!window3.isOpen()){
+                openBayDisplayWindow(window3, gui);
+            }
         });
 
         menu->addMenuItem("Close Bay Display Window");
         menu->connectMenuItem({"Window", "Close Bay Display Window"}, [&](){
-            closeBayDisplayWindow(window2, gui);
+            if(window3.isOpen()){
+                closeBayDisplayWindow(window3, gui);
+            }else
+            if(window2.isOpen()){
+                closeBayDisplayWindow(window2, gui);
+            }
         });
 
         menu->setMenuItemEnabled("Window", "Show Bay Display Window", true);
@@ -437,6 +517,9 @@ int main(){
                 if(window2.isOpen()){
                     closeBayDisplayWindow(window2, gui);
                 }
+                if(window3.isOpen()){
+                    closeBayDisplayWindow(window3, gui);
+                }
                 window.close();
                 return EXIT_SUCCESS;
             }
@@ -463,6 +546,17 @@ int main(){
                 }
             }
         }//end while(window2.pollEvent(event))
+
+        if(window3.isOpen()){
+            //EVENT OBJECT AND EVENT POLLING LOOP
+            sf::Event event;
+            while(window3.pollEvent(event)){
+                //WINDOW CLOSE EVENT, activated on pressing the close button
+                if (event.type == sf::Event::Closed){
+                    closeBayDisplayWindow(window3, gui);
+                }
+            }
+        }//end while(window3.pollEvent(event))
 
         //IF WINDOW HAS FOCUS, CHECK KEY INPUTS
         if(hasFocus){
@@ -549,6 +643,8 @@ int main(){
         /*for(unsigned short i = 0; i < c.getBoxTextObjects().size(); i++){
             window.draw(c.getBoxTextObjects().at(i));
         }*/
+        c.setRenderTarget(window);
+        c.getBoxTextObjects()->draw();
         for(unsigned short i = 0; i < c.getQueueRectObjects().size(); i++){
             window.draw(c.getQueueRectObjects().at(i));
         }
@@ -562,8 +658,6 @@ int main(){
             }
             c.setRenderTarget(window2);
             c.getBoxTextObjects()->draw();
-            c.setRenderTarget(window);
-            c.getBoxTextObjects()->draw();
             for(unsigned short i = 0; i < c.getQueueRectObjects().size(); i++){
                 window2.draw(c.getQueueRectObjects().at(i));
             }
@@ -572,8 +666,22 @@ int main(){
             }
 
             window2.display();
-        }else{
+        }
+
+        if(window3.isOpen()){
+            for(unsigned short i = 0; i < c.getBoxRectObjects().size(); i++){
+                window3.draw(c.getBoxRectObjects().at(i));
+            }
+            c.setRenderTarget(window3);
             c.getBoxTextObjects()->draw();
+            for(unsigned short i = 0; i < c.getQueueRectObjects().size(); i++){
+                window3.draw(c.getQueueRectObjects().at(i));
+            }
+            for(unsigned short i = 0; i < c.getQueueTextObjects().size(); i++){
+                window3.draw(c.getQueueTextObjects().at(i));
+            }
+
+            window3.display();
         }
 
         window.draw(mx);

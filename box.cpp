@@ -2,31 +2,54 @@
 #include <sstream>
 #include <vector>
 #include <chrono>
+#include <cmath>
 #include "rect.h"
 #include "ticket.h"
 #include "box.h"
 
 Box::Box():label("Bay"), tickets(), boundary(), active(false), selected(false), status(selectStatuses::standby),
-        activeStartPoint(std::chrono::steady_clock::now()){};
+        activeStartPoint(std::chrono::steady_clock::now()),
+        mostRecentUpdatePoint(std::chrono::steady_clock::now()){
+                mostRecentUpdatePoint -= constructorBuffer;
+        };
 
 Box::Box(short x, short y):label("Bay"), tickets(), boundary(x, y, 200, 400), active(false), selected(false),
-        status(selectStatuses::standby), activeStartPoint(std::chrono::steady_clock::now()){};
+        status(selectStatuses::standby), activeStartPoint(std::chrono::steady_clock::now()),
+        mostRecentUpdatePoint(std::chrono::steady_clock::now()){
+                mostRecentUpdatePoint -= constructorBuffer;
+        };
 
 Box::Box(short x, short y, short w, short h):
         label("Bay"), tickets(), boundary(x, y, w, h), active(false), selected(false), status(selectStatuses::standby),
-        activeStartPoint(std::chrono::steady_clock::now()){};
+        activeStartPoint(std::chrono::steady_clock::now()),
+        mostRecentUpdatePoint(std::chrono::steady_clock::now()){
+                mostRecentUpdatePoint -= constructorBuffer;
+        };
 
 Box::Box(std::string newL):label(newL), tickets(), boundary(), active(false), selected(false),
-        status(selectStatuses::standby), activeStartPoint(std::chrono::steady_clock::now()){};
+        status(selectStatuses::standby), activeStartPoint(std::chrono::steady_clock::now()),
+        mostRecentUpdatePoint(std::chrono::steady_clock::now()){
+                mostRecentUpdatePoint -= constructorBuffer;
+        };
 
 Box::Box(std::string newL, short x, short y):label(newL), tickets(), boundary(x, y, 200, 400), active(false), selected(false),
-        status(selectStatuses::standby), activeStartPoint(std::chrono::steady_clock::now()){};
+        status(selectStatuses::standby), activeStartPoint(std::chrono::steady_clock::now()),
+        mostRecentUpdatePoint(std::chrono::steady_clock::now()){
+                mostRecentUpdatePoint -= constructorBuffer;
+        };
 
 Box::Box(std::string newL, short x, short y, short w, short h):
         label(newL), tickets(), boundary(x, y, w, h), active(false), selected(false), status(selectStatuses::standby),
-        activeStartPoint(std::chrono::steady_clock::now()){};
+        activeStartPoint(std::chrono::steady_clock::now()),
+        mostRecentUpdatePoint(std::chrono::steady_clock::now()){
+                mostRecentUpdatePoint -= constructorBuffer;
+        };
 
 void Box::setLabel(std::string s){
+    if(label.compare(s) != 0){
+        setMostRecentUpdatePoint(std::chrono::steady_clock::now());
+    }
+
     label = s;
 };
 
@@ -34,6 +57,7 @@ void Box::setActive(bool b){
     active = b;
     if(active == true){
         setActiveStartPoint(std::chrono::steady_clock::now());
+        setMostRecentUpdatePoint(std::chrono::steady_clock::now());
     }
 };
 
@@ -62,6 +86,10 @@ void Box::setStatus(unsigned short s){
 
 void Box::setActiveStartPoint(std::chrono::steady_clock::time_point p){
     activeStartPoint = p;
+};
+
+void Box::setMostRecentUpdatePoint(std::chrono::steady_clock::time_point p){
+    mostRecentUpdatePoint = p;
 };
 
 std::vector<Ticket*> Box::getTickets(){
@@ -102,6 +130,19 @@ void Box::addTicket(std::string newID, std::string newV, std::string newN, short
     }
 };
 
+//update ticket by index
+// -re-factored from Controller
+void Box::updateTicketAtIndex(unsigned short index, std::string newID, std::string newV, std::string newN){
+    if(tickets[index]->getID().compare(newID) != 0 || tickets[index]->getVehicle().compare(newV) != 0
+            || tickets[index]->getNotes().compare(newN) != 0){
+        setMostRecentUpdatePoint(std::chrono::steady_clock::now());
+    }
+
+    tickets[index]->setID(newID);
+    tickets[index]->setVehicle(newV);
+    tickets[index]->setNotes(newN);
+};
+
 //takes string 'id' as a parameter
 //if the id parameter matches the id of any ticket
 //the first ticket instance that matched is removed
@@ -139,10 +180,17 @@ void Box::removeTicketByIndex(unsigned short s){
     }
 }
 
+double Box::getTimeSinceActiveAsDouble(std::chrono::steady_clock::time_point p){
+    //generate the active duration of the box and generate the related data
+    std::chrono::duration<double> lifespan = std::chrono::duration_cast<std::chrono::duration<double>>(p - activeStartPoint);
+
+    return lifespan.count();
+};
+
 std::string Box::getTimeSinceActiveAsString(std::chrono::steady_clock::time_point p){
     std::stringstream ss;
 
-    //generate the lifespan duration of the bucket and generate the related data
+    //generate the active duration of the box and generate the related data
     std::chrono::duration<int> lifespan = std::chrono::duration_cast<std::chrono::duration<int>>(p - activeStartPoint);
     int hours = lifespan.count() * std::chrono::hours::period::den / std::chrono::hours::period::num;
     int minutes = (lifespan.count() * std::chrono::minutes::period::den / std::chrono::minutes::period::num)%60;
@@ -156,4 +204,19 @@ std::string Box::getTimeSinceActiveAsString(std::chrono::steady_clock::time_poin
 
     //return the final string
     return ss.str();
+};
+
+bool Box::onFlicker(std::chrono::steady_clock::time_point p){
+    std::chrono::duration<double> timeSinceUpdate
+        = std::chrono::duration_cast<std::chrono::duration<double>>(p - mostRecentUpdatePoint);
+
+    if(timeSinceUpdate.count() < fullBoxUpdateFlickeringDuration.count()){
+        if(fmod(timeSinceUpdate.count(), (2*singleBoxFlickerDuration.count())) < singleBoxFlickerDuration.count()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    return false;
 };

@@ -3,8 +3,8 @@
 #ifndef TICKET
 #define TICKET
 
-#define VEHICLE_CHAR_LIMIT 50
-#define NOTES_CHAR_LIMIT 100
+#define VEHICLE_CHAR_LIMIT 40
+#define NOTES_CHAR_LIMIT 125
 
 class Ticket{
 private:

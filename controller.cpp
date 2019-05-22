@@ -246,9 +246,7 @@ void Controller::updateTicket(short index, std::string newID, std::string newV, 
             for(unsigned short i = 0; i < boxList[boxIndex].getTickets().size(); i++){
                 //if ID of ticket in bucket matches id of ticket in box, update info
                 if(ticketQueue[index].getTicket()->getID().compare(boxList[boxIndex].getTickets()[i]->getID()) == 0){
-                    boxList[boxIndex].getTickets()[i]->setID(newID);
-                    boxList[boxIndex].getTickets()[i]->setVehicle(newV);
-                    boxList[boxIndex].getTickets()[i]->setNotes(newN);
+                    boxList[boxIndex].updateTicketAtIndex(i, newID, newV, newN);
                     break;
                 }
             }
@@ -356,6 +354,7 @@ void Controller::createBoxObjects(){
             label->setText("Bay:");
             label->setTextSize(21);
             label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 2*TEXT_LINE_SPACING_21);
+            label->setSize(test.getBoundary()->getW(), TEXT_LINE_SPACING_21);
             label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
             ss.str(std::string());
             ss << "idLabel" << i;
@@ -366,9 +365,21 @@ void Controller::createBoxObjects(){
             label->setText("Bay:");
             label->setTextSize(21);
             label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 3*TEXT_LINE_SPACING_21);
+            label->setSize(test.getBoundary()->getW(), 2*TEXT_LINE_SPACING_21);
             label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
             ss.str(std::string());
             ss << "vLabel" << i;
+            boxTextObjects.add(label, ss.str());
+
+            //NOTES INFO
+            label = tgui::Label::create();
+            label->setText("Bay:");
+            label->setTextSize(21);
+            label->setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 5*TEXT_LINE_SPACING_21);
+            label->setSize(test.getBoundary()->getW(), 6*TEXT_LINE_SPACING_21);
+            label->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+            ss.str(std::string());
+            ss << "nLabel" << i;
             boxTextObjects.add(label, ss.str());
 
             //VEHICLE WAITING INFO
@@ -414,9 +425,25 @@ void Controller::updateBoxObjects(){
     for(unsigned short i = 0; i < boxList.size(); i++){
         //box boundary rectangle shape object
         if(boxList[i].isSelected()){
-        boxRectObjects[i].setOutlineColor(sf::Color::Red);
+        boxRectObjects[i].setOutlineColor(sf::Color::White);
+        }else
+        if(boxList[i].isActive()){
+            if(boxList[i].getTimeSinceActiveAsDouble(currentTimePoint) > BOX_URGENT_TIME){
+                boxRectObjects[i].setOutlineColor(sf::Color::Red);
+            }else
+            if(boxList[i].getTimeSinceActiveAsDouble(currentTimePoint) > BOX_WARNING_TIME){
+                boxRectObjects[i].setOutlineColor(sf::Color::Yellow);
+            }else{
+                boxRectObjects[i].setOutlineColor(sf::Color::Green);
+            }
         }else{
-            boxRectObjects[i].setOutlineColor(sf::Color::White);
+            boxRectObjects[i].setOutlineColor(sf::Color::Black);
+        }
+
+        if(boxList[i].onFlicker(currentTimePoint)){
+            boxRectObjects[i].setFillColor(sf::Color::Yellow);
+        }else{
+            boxRectObjects[i].setFillColor(sf::Color::Black);
         }
 
         //box label text
@@ -430,7 +457,15 @@ void Controller::updateBoxObjects(){
         boxTextObjects[i*3].setString(boxList[i].getLabel());*/
         ss.str(std::string());
         ss << "bayLabel" << i;
+        if(boxList[i].onFlicker(currentTimePoint)){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+        }
         std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getLabel());
+
 
         //ticket ID text
         //SET FONT
@@ -447,8 +482,15 @@ void Controller::updateBoxObjects(){
         }*/
         ss.str(std::string());
         ss << "idLabel" << i;
+        if(boxList[i].onFlicker(currentTimePoint)){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+        }
         if(boxList[i].getTickets().empty()){
-            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("...");
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("");
         }else{
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getTickets()[0]->getID());
         }
@@ -468,14 +510,43 @@ void Controller::updateBoxObjects(){
         }*/
         ss.str(std::string());
         ss << "vLabel" << i;
+        if(boxList[i].onFlicker(currentTimePoint)){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+        }
         if(boxList[i].getTickets().empty()){
-            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("...");
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("");
         }else{
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getTickets()[0]->getVehicle());
         }
 
         ss.str(std::string());
+        ss << "nLabel" << i;
+        if(boxList[i].onFlicker(currentTimePoint)){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+        }
+        if(boxList[i].getTickets().empty()){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("");
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getTickets()[0]->getNotes());
+        }
+
+        ss.str(std::string());
         ss << "vwLabel" << i;
+        if(boxList[i].onFlicker(currentTimePoint)){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+        }
         if(boxList[i].getTickets().size() > 1){
             std::string temp = ss.str(); //holds the name of the vwLabel for later use
             ss.str(std::string());
@@ -489,6 +560,13 @@ void Controller::updateBoxObjects(){
 
         ss.str(std::string());
         ss << "timeLabel" << i;
+        if(boxList[i].onFlicker(currentTimePoint)){
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
+        }else{
+            std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
+                ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
+        }
         if(boxList[i].isActive()){
             std::string temp = ss.str(); //holds the name of the timeLabel for later use
             ss.str(std::string());
@@ -523,6 +601,10 @@ void Controller::updateQueueObjects(){
     std::stringstream ss; //exists to help with print-formatting
     unsigned short i = 0;
     while(i < ticketQueue.size()){
+        if(ticketQueue[i].onFlicker(currentTimePoint)){
+            queueTextObjects[i].setFillColor(sf::Color::Black);
+            queueRectObjects[i].setFillColor(sf::Color::Yellow);
+        }else
         if(i == selectedBucket){
             queueTextObjects[i].setFillColor(sf::Color::Black);
             queueRectObjects[i].setFillColor(sf::Color::White);
@@ -536,9 +618,13 @@ void Controller::updateQueueObjects(){
         if(ticketQueue[i].getBoxNum() >= 0){
             ss << " [" << boxList[ticketQueue[i].getBoxNum()].getLabel() << "]";
         }
-        ss << ": " << ticketQueue[i].getTicket()->getID() << " - " <<ticketQueue[i].getTicket()->getVehicle() <<
-            " - " << ticketQueue[i].getTicket()->getNotes() <<
-            " - " << ticketQueue[i].getTimeSinceBirthAsString(currentTimePoint);
+        ss << ": " << ticketQueue[i].getTicket()->getID() << " - " << ticketQueue[i].getTicket()->getVehicle() << " - ";
+        if(ticketQueue[i].getTicket()->getNotes().size() > QUEUE_NOTES_LIMIT){
+            ss << ticketQueue[i].getTicket()->getNotes().substr(0, QUEUE_NOTES_LIMIT) << "...";
+        }else{
+            ss << ticketQueue[i].getTicket()->getNotes();
+        }
+        ss << " - " << ticketQueue[i].getTimeSinceBirthAsString(currentTimePoint);
         queueTextObjects[i].setString(ss.str());
         i++;
     }

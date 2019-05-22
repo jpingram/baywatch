@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1558388645 source:c:\users\cookie cat\documents\baywatch\main.cpp
+1558482297 source:c:\users\cookie cat\documents\baywatch\main.cpp
 	<TGUI/TGUI.hpp>
 	<SFML/Graphics.hpp>
 	<string>
@@ -8,6 +8,7 @@
 	<memory>
 	"data.h"
 	"controller.h"
+	"ticket.h"
 
 1551489358 source:c:\users\cookie cat\documents\baywatch\data.cpp
 	<SFML/Graphics/Color.hpp>
@@ -25,26 +26,27 @@
 	<string>
 	"ticket.h"
 
-1557000166 c:\users\cookie cat\documents\baywatch\ticket.h
+1558469124 c:\users\cookie cat\documents\baywatch\ticket.h
 	<string>
 
-1558383810 source:c:\users\cookie cat\documents\baywatch\box.cpp
+1558476906 source:c:\users\cookie cat\documents\baywatch\box.cpp
 	<string>
 	<sstream>
 	<vector>
 	<chrono>
+	<cmath>
 	"rect.h"
 	"ticket.h"
 	"box.h"
 
-1558383679 c:\users\cookie cat\documents\baywatch\box.h
+1558482664 c:\users\cookie cat\documents\baywatch\box.h
 	<string>
 	<vector>
 	<chrono>
 	"ticket.h"
 	"rect.h"
 
-1558388983 source:c:\users\cookie cat\documents\baywatch\controller.cpp
+1558478375 source:c:\users\cookie cat\documents\baywatch\controller.cpp
 	<vector>
 	<string>
 	<sstream>
@@ -63,7 +65,7 @@
 	"ticketbucket.h"
 	"controller.h"
 
-1558385889 c:\users\cookie cat\documents\baywatch\controller.h
+1558468973 c:\users\cookie cat\documents\baywatch\controller.h
 	<vector>
 	<chrono>
 	<TGUI/Gui.hpp>
@@ -72,15 +74,16 @@
 	"box.h"
 	"ticketbucket.h"
 
-1558379898 c:\users\cookie cat\documents\baywatch\ticketbucket.h
+1558474190 c:\users\cookie cat\documents\baywatch\ticketbucket.h
 	<string>
 	<chrono>
 	"ticket.h"
 
-1558379911 source:c:\users\cookie cat\documents\baywatch\ticketbucket.cpp
+1558474311 source:c:\users\cookie cat\documents\baywatch\ticketbucket.cpp
 	<chrono>
 	<string>
 	<sstream>
+	<cmath>
 	"ticket.h"
 	"ticketbucket.h"
 

@@ -1,25 +1,36 @@
 #include <chrono>
 #include <string>
 #include <sstream>
+#include <cmath>
 #include "ticket.h"
 #include "ticketbucket.h"
 
 TicketBucket::TicketBucket():ticket(), boxNum(), selected(false), active(false),
-        birthPoint(std::chrono::steady_clock::now()){};
+        birthPoint(std::chrono::steady_clock::now()), mostRecentUpdatePoint(std::chrono::steady_clock::now()){};
 
 TicketBucket::TicketBucket(std::string newID, std::string newV, std::string newN):
-        ticket(newID, newV, newN), boxNum(), selected(false), active(false), birthPoint(std::chrono::steady_clock::now()){};
+        ticket(newID, newV, newN), boxNum(), selected(false), active(false),
+        birthPoint(std::chrono::steady_clock::now()), mostRecentUpdatePoint(std::chrono::steady_clock::now()){};
 
 TicketBucket::TicketBucket(std::string newID, std::string newV, std::string newN, short s):
-        ticket(newID, newV, newN), boxNum(s), selected(false), active(false), birthPoint(std::chrono::steady_clock::now()){};
+        ticket(newID, newV, newN), boxNum(s), selected(false), active(false),
+        birthPoint(std::chrono::steady_clock::now()), mostRecentUpdatePoint(std::chrono::steady_clock::now()){};
 
 void TicketBucket::updateTicket(std::string newID, std::string newV, std::string newN){
+    if(ticket.getID().compare(newID) != 0 || ticket.getVehicle().compare(newV) != 0 || ticket.getNotes().compare(newN) != 0){
+        setMostRecentUpdatePoint(std::chrono::steady_clock::now());
+    }
+
     ticket.setID(newID);
     ticket.setVehicle(newV);
     ticket.setNotes(newN);
 };
 
 void TicketBucket::setBoxNum(short s){
+    if(boxNum != s){
+        setMostRecentUpdatePoint(std::chrono::steady_clock::now());
+    }
+
     boxNum = s;
 };
 
@@ -29,6 +40,14 @@ void TicketBucket::setSelected(bool b){
 
 void TicketBucket::setActive(bool b){
     active = b;
+};
+
+void TicketBucket::setMostRecentUpdatePoint(std::chrono::steady_clock::time_point p){
+    mostRecentUpdatePoint = p;
+};
+
+void TicketBucket::setBirthPoint(std::chrono::steady_clock::time_point p){
+    birthPoint = p;
 };
 
 Ticket* TicketBucket::getTicket(){
@@ -45,10 +64,6 @@ bool TicketBucket::isSelected(){
 
 bool TicketBucket::isActive(){
     return active;
-};
-
-void TicketBucket::setBirthPoint(std::chrono::steady_clock::time_point p){
-    birthPoint = p;
 };
 
 std::string TicketBucket::getTimeSinceBirthAsString(std::chrono::steady_clock::time_point p){
@@ -68,4 +83,19 @@ std::string TicketBucket::getTimeSinceBirthAsString(std::chrono::steady_clock::t
 
     //return the final string
     return ss.str();
+};
+
+bool TicketBucket::onFlicker(std::chrono::steady_clock::time_point p){
+    std::chrono::duration<double> timeSinceUpdate
+        = std::chrono::duration_cast<std::chrono::duration<double>>(p - mostRecentUpdatePoint);
+
+    if(timeSinceUpdate.count() < fullUpdateFlickeringDuration.count()){
+        if(fmod(timeSinceUpdate.count(), (2*singleFlickerDuration.count())) < singleFlickerDuration.count()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    return false;
 };

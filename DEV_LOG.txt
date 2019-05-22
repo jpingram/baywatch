@@ -248,3 +248,45 @@
 	display does not update when dragging an SFML window
 		does not effect timers or main functionality
 	otherwise, no known errors
+21st of May [4:51PM] - Alpha 0.5 - functionality and display updates
+	added display for "Notes" of tickets in an active box
+	updated maximum values for "Vehicle Info" and "Notes
+		40 and 125 characters, respectively
+	"Notes" info now gets truncated in queue object if over 80 characters
+	text in "Vehicle Info" and "Notes" labels now wrap-around
+		text confined to individual boxes
+	removed default text for ID and Vehicle Info of tickets in Box
+		originally "..."
+	queue and box objects now flicker when info is edited on them
+		flickers yellow for six seconds
+		text changes colors to white when their backgrounds are yellow
+		in both Box and TicketBucket
+			added static flicker duration variables
+			added mostRecentUpdatePoint time_point (m.R.U.P.)
+			added setMostRecentUpdatePoint()
+			added onFlicker(), returns true if Box/Bucket is on a flicker
+				on a flicker -> background should be yellow
+			updated all info-update functions to update m.R.U.P.
+			updated constructors to include m.R.U.P
+	borders of Boxes now White only if Box is selected
+	if Box is active, borders become green
+		borders turn yellow after an amount of active time
+		borders turn red after a longer amount of active time
+		color change time frames determined by MACROs in box.h
+			currently 900 secs. (15 min.) and 1800 secs. (30 min.)
+	in vwindow
+		'OK' is not allowed to be pressed if
+			there is no ID entered
+			ID entered is already in use
+			Vechicle Info is over max characters
+			Notes is over max characters
+		error message appears in red in vwindow in above conditions
+		works in both 'Add' and 'Edit' mode
+	TWO Bay Display Windows now usable
+		'window3' hardcoded in similar fashion to window2
+		'Window' menu options update to work with both windows
+		started work on vector<sf::RenderWindow*> to automate display windows
+			scrapped code on seg fault errors
+			realized the cause of the error after 'window3' was hardcoded
+			might revisit this idea if need be in the future
+	no known errors

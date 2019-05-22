@@ -21,6 +21,7 @@
 #define QUEUE_X_ZERO_POINT 0
 #define QUEUE_Y_ZERO_POINT 400
 #define QUEUE_WIDTH 1200
+#define QUEUE_NOTES_LIMIT 80
 
 #define clock std::chrono::steady_clock
 

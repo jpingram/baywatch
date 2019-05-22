@@ -5,6 +5,9 @@
 #ifndef TICKETBUCKET
 #define TICKETBUCKET
 
+static std::chrono::duration<double> fullUpdateFlickeringDuration(5.8f);
+static std::chrono::duration<double> singleFlickerDuration(0.2f);
+
 class TicketBucket{
 private:
     Ticket ticket;
@@ -14,6 +17,7 @@ private:
     bool active;
 
     std::chrono::steady_clock::time_point birthPoint;
+    std::chrono::steady_clock::time_point mostRecentUpdatePoint;
 public:
     TicketBucket();
     TicketBucket(std::string newID, std::string newV, std::string newN);
@@ -23,14 +27,17 @@ public:
     void setBoxNum(short s);
     void setSelected(bool b);
     void setActive(bool b);
+    void setBirthPoint(std::chrono::steady_clock::time_point p);
+    void setMostRecentUpdatePoint(std::chrono::steady_clock::time_point p);
 
     Ticket* getTicket();
     short getBoxNum(); //denotes bay ticket is assigned (-1 if no bay currently assigned)
     bool isSelected();
     bool isActive();
 
-    void setBirthPoint(std::chrono::steady_clock::time_point p);
     std::string getTimeSinceBirthAsString(std::chrono::steady_clock::time_point p);
+
+    bool onFlicker(std::chrono::steady_clock::time_point p);
 };
 
 #endif // TICKETBUCKET
