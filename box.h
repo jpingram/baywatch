@@ -37,6 +37,8 @@ public:
     Box(std::string newL, short x, short y);
     Box(std::string newL, short x, short y, short w, short h);
 
+    ~Box();
+
     void setLabel(std::string s);
     void setActive(bool b);
     void setSelected(bool b);

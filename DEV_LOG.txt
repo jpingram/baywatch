@@ -290,3 +290,14 @@
 			realized the cause of the error after 'window3' was hardcoded
 			might revisit this idea if need be in the future
 	no known errors
+22nd of May [1:34PM] - Alpha 0.5.1 - first 'Release' build
+	cleaned code up a little
+	removed display of mouse coordinates from all displays
+	added "Embassy Tire & Wheel" logo as window icon
+		added 'logo32' (png) to data.cpp/data.h
+	added destructor to Box
+		Box seemed to be the only class with dynamically allocated objects
+	changed project's Release build options
+		exports to "BayWatch 0.5.1.exe"
+		exports as "GUI Application" as opposed to "Consoloe Application"
+			removes console window

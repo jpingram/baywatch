@@ -27,7 +27,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
     try{
         //CHILDWINDOW
         auto child = tgui::ChildWindow::create();
-        //child->setRenderer(theme.getRenderer("ChildWindow"));
         child->setSize(500, 300);
         child->setPosition(200, 200);
         if(t == windowType::a){
@@ -43,7 +42,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //LABEL
         auto label = tgui::Label::create();
-        //label->setRenderer(theme.getRenderer("Label"));
         label->setText("Ticket ID:");
         label->setPosition(10, 30);
         label->setTextSize(15);
@@ -51,7 +49,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //EDITBOX
         auto editBox = tgui::EditBox::create();
-        //editBox->setRenderer(theme.getRenderer("EditBox"));
         editBox->setSize(365, 25);
         editBox->setTextSize(18);
         editBox->setPosition(125, 30);
@@ -68,7 +65,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //LABEL
         label = tgui::Label::create();
-        //label->setRenderer(theme.getRenderer("Label"));
         label->setText("Vehicle Info:");
         label->setPosition(10, 60);
         label->setTextSize(15);
@@ -76,7 +72,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //EDITBOX
         editBox = tgui::EditBox::create();
-        //editBox->setRenderer(theme.getRenderer("EditBox"));
         editBox->setSize(365, 25);
         editBox->setTextSize(18);
         editBox->setPosition(125, 60);
@@ -93,7 +88,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //LABEL
         label = tgui::Label::create();
-        //label->setRenderer(theme.getRenderer("Label"));
         label->setText("Notes:");
         label->setPosition(10, 90);
         label->setTextSize(15);
@@ -101,7 +95,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //EDITBOX
         editBox = tgui::EditBox::create();
-        //editBox->setRenderer(theme.getRenderer("EditBox"));
         editBox->setSize(365, 25);
         editBox->setTextSize(18);
         editBox->setPosition(125, 90);
@@ -118,7 +111,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //LABEL
         label = tgui::Label::create();
-        //label->setRenderer(theme.getRenderer("Label"));
         label->setText("Bay:");
         label->setPosition(10, 120);
         label->setTextSize(15);
@@ -126,7 +118,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //combobox for now
         auto comboBox = tgui::ComboBox::create();
-        //comboBox->setRenderer(theme.getRenderer("ComboBox"));
         comboBox->setSize(120, 30);
         comboBox->setPosition(50, 120);
         comboBox->addItem("[none]");
@@ -154,7 +145,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //BUTTON
         auto button = tgui::Button::create();
-        //button->setRenderer(theme.getRenderer("Button"));
         button->setPosition(125, 200);
         button->setText("OK");
         button->setSize(100, 30);
@@ -232,7 +222,6 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
 
         //BUTTON
         button = tgui::Button::create();
-        //button->setRenderer(theme.getRenderer("Button"));
         button->setPosition(275, 200);
         button->setText("Cancel");
         button->setSize(100, 30);
@@ -252,7 +241,6 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
     try{
         //CHILDWINDOW
         auto child = tgui::ChildWindow::create();
-        //child->setRenderer(theme.getRenderer("ChildWindow"));
         child->setSize(500, 100);
         child->setPosition(200, 200);
         child->setTitle("Edit Bay Info");
@@ -263,7 +251,6 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
 
         //LABEL
         auto label = tgui::Label::create();
-        //label->setRenderer(theme.getRenderer("Label"));
         label->setText("Bay Label:");
         label->setPosition(10, 30);
         label->setTextSize(15);
@@ -271,7 +258,6 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
 
         //EDITBOX
         auto editBox = tgui::EditBox::create();
-        //editBox->setRenderer(theme.getRenderer("EditBox"));
         editBox->setSize(365, 25);
         editBox->setTextSize(18);
         editBox->setPosition(125, 30);
@@ -284,7 +270,6 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
 
         //BUTTON
         auto button = tgui::Button::create();
-        //button->setRenderer(theme.getRenderer("Button"));
         button->setPosition(125, 60);
         button->setText("OK");
         button->setSize(100, 30);
@@ -296,7 +281,6 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
 
         //BUTTON
         button = tgui::Button::create();
-        //button->setRenderer(theme.getRenderer("Button"));
         button->setPosition(275, 60);
         button->setText("Cancel");
         button->setSize(100, 30);
@@ -314,7 +298,10 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
 };
 
 void openBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
-    target.create(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5 Bay Display");
+    target.create(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5.1 Bay Display");
+    sf::Image icon;
+    icon.loadFromMemory(logo32, logo32_length);
+    target.setIcon(32, 32, icon.getPixelsPtr());
 
     numDisplayWindows++;
 
@@ -341,7 +328,12 @@ void closeBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
 
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5.1");
+    sf::Image icon;
+    icon.loadFromMemory(logo32, logo32_length);
+    window.setIcon(32, 32, icon.getPixelsPtr());
+
+    //display windows (instantiate but don't construct)
     sf::RenderWindow window2;
     sf::RenderWindow window3;
 
@@ -359,7 +351,6 @@ int main(){
 
     try{
         auto menu = tgui::MenuBar::create();
-        //menu->setRenderer(theme.getRenderer("MenuBar"));
         menu->setSize(static_cast<float>(window.getSize().x), 22.f);
         menu->addMenu("Ticket");
 
@@ -684,15 +675,16 @@ int main(){
             window3.display();
         }
 
-        window.draw(mx);
-        window.draw(my);
-        window.draw(mx2);
-        window.draw(my2);
+        //KEPT FOR DEBUG/VISUAL REFERENCE PURPOSES
+        //window.draw(mx);
+        //window.draw(my);
+        //window.draw(mx2);
+        //window.draw(my2);
 
         gui.draw();
 
         window.display(); //finally, display!
     }//end while(window.isOpen())
 
-    return 0;
+    return EXIT_SUCCESS;
 }

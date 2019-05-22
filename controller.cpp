@@ -232,7 +232,6 @@ void Controller::setBoxNum(unsigned short index, short newBox){
         if(newBox != -1){
             Ticket* t = ticketQueue[index].getTicket();
             boxList[newBox].addTicket(t->getID(), t->getVehicle(), t->getNotes(), newBox);
-            //boxList[newBox].setActiveStartPoint(tp);
         }
     }
 
@@ -312,27 +311,6 @@ void Controller::createBoxObjects(){
         ss << "Bay" << (i+1);
         Box test(ss.str(), BOX_X_ZERO_POINT+(i*BOX_WIDTH)+(i*10), BOX_Y_ZERO_POINT, BOX_WIDTH, BOX_HEIGHT);
         boxList.push_back(test);
-
-        /*sf::Text indexText;
-        indexText.setFont(freeroadB);
-        indexText.setCharacterSize(15);
-        indexText.setPosition(test.getBoundary()->getX(), test.getBoundary()->getY());
-        indexText.setFillColor(sf::Color::White);
-        boxTextObjects.push_back(indexText);
-
-        sf::Text idText;
-        idText.setFont(freeroadR);
-        idText.setCharacterSize(15);
-        idText.setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + TEXT_LINE_SPACING_15);
-        idText.setFillColor(sf::Color::White);
-        boxTextObjects.push_back(idText);
-
-        sf::Text vText;
-        vText.setFont(freeroadR);
-        vText.setCharacterSize(15);
-        vText.setPosition(test.getBoundary()->getX(), test.getBoundary()->getY() + 2*TEXT_LINE_SPACING_15);
-        vText.setFillColor(sf::Color::White);
-        boxTextObjects.push_back(vText);*/
 
         try{
             boxTextObjects.setFont(freeroadB);
@@ -424,6 +402,7 @@ void Controller::updateBoxObjects(){
 
     for(unsigned short i = 0; i < boxList.size(); i++){
         //box boundary rectangle shape object
+        //SET OUTLINE COLOR
         if(boxList[i].isSelected()){
         boxRectObjects[i].setOutlineColor(sf::Color::White);
         }else
@@ -439,7 +418,7 @@ void Controller::updateBoxObjects(){
         }else{
             boxRectObjects[i].setOutlineColor(sf::Color::Black);
         }
-
+        //SET BACKGROUND COLOR
         if(boxList[i].onFlicker(currentTimePoint)){
             boxRectObjects[i].setFillColor(sf::Color::Yellow);
         }else{
@@ -447,16 +426,9 @@ void Controller::updateBoxObjects(){
         }
 
         //box label text
-        //SET FONT
-        /*if(i == selectedBox && boxList[selectedBox].getStatus() != selectStatuses::stage1){
-            boxTextObjects[i*3].setFont(freeroadR);
-        }else{
-            boxTextObjects[i*3].setFont(freeroadB);
-        }
-        //SET TEXT
-        boxTextObjects[i*3].setString(boxList[i].getLabel());*/
         ss.str(std::string());
         ss << "bayLabel" << i;
+        //SET COLOR
         if(boxList[i].onFlicker(currentTimePoint)){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
@@ -464,24 +436,14 @@ void Controller::updateBoxObjects(){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
         }
+        //SET TEXT
         std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getLabel());
 
 
         //ticket ID text
-        //SET FONT
-        /*if(i == selectedBox && boxList[selectedBox].getStatus() == selectStatuses::stage2){
-            boxTextObjects[i*3+1].setFont(freeroadB);
-        }else{
-            boxTextObjects[i*3+1].setFont(freeroadR);
-        }
-        //SET TEXT
-        if(boxList[i].getTickets().empty()){
-            boxTextObjects[i*3+1].setString("...");
-        }else{
-            boxTextObjects[i*3+1].setString(boxList[i].getTickets()[0]->getID());
-        }*/
         ss.str(std::string());
         ss << "idLabel" << i;
+        //SET COLOR
         if(boxList[i].onFlicker(currentTimePoint)){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
@@ -489,6 +451,7 @@ void Controller::updateBoxObjects(){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
         }
+        //SET TEXT
         if(boxList[i].getTickets().empty()){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("");
         }else{
@@ -496,20 +459,9 @@ void Controller::updateBoxObjects(){
         }
 
         //vehicle text
-        //SET FONT
-        /*if(i == selectedBox && boxList[selectedBox].getStatus() == selectStatuses::stage3){
-            boxTextObjects[i*3+2].setFont(freeroadB);
-        }else{
-            boxTextObjects[i*3+2].setFont(freeroadR);
-        }
-        //SET TEXT
-        if(boxList[i].getTickets().empty()){
-            boxTextObjects[i*3+2].setString("VACANT");
-        }else{
-            boxTextObjects[i*3+2].setString(boxList[i].getTickets()[0]->getVehicle());
-        }*/
         ss.str(std::string());
         ss << "vLabel" << i;
+        //SET COLOR
         if(boxList[i].onFlicker(currentTimePoint)){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
@@ -517,6 +469,7 @@ void Controller::updateBoxObjects(){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
         }
+        //SET TEXT
         if(boxList[i].getTickets().empty()){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("");
         }else{
@@ -525,6 +478,7 @@ void Controller::updateBoxObjects(){
 
         ss.str(std::string());
         ss << "nLabel" << i;
+        //SET COLOR
         if(boxList[i].onFlicker(currentTimePoint)){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
@@ -532,14 +486,17 @@ void Controller::updateBoxObjects(){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
         }
+        //SET TEXT
         if(boxList[i].getTickets().empty()){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText("");
         }else{
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))->setText(boxList[i].getTickets()[0]->getNotes());
         }
 
+        //vehicle waiting label
         ss.str(std::string());
         ss << "vwLabel" << i;
+        //SET COLOR
         if(boxList[i].onFlicker(currentTimePoint)){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
@@ -547,6 +504,7 @@ void Controller::updateBoxObjects(){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
         }
+        //SET TEXT (changes contents of 'ss')
         if(boxList[i].getTickets().size() > 1){
             std::string temp = ss.str(); //holds the name of the vwLabel for later use
             ss.str(std::string());
@@ -558,8 +516,10 @@ void Controller::updateBoxObjects(){
                 ->setText("");
         }
 
+        //bay active time label
         ss.str(std::string());
         ss << "timeLabel" << i;
+        //SET COLOR
         if(boxList[i].onFlicker(currentTimePoint)){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::Black));
@@ -567,6 +527,7 @@ void Controller::updateBoxObjects(){
             std::dynamic_pointer_cast<tgui::Label>(boxTextObjects.get(ss.str()))
                 ->getRenderer()->setTextColor(tgui::Color(sf::Color::White));
         }
+        //SET TEXT (changes contents of 'ss')
         if(boxList[i].isActive()){
             std::string temp = ss.str(); //holds the name of the timeLabel for later use
             ss.str(std::string());

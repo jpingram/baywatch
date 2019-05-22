@@ -45,6 +45,13 @@ Box::Box(std::string newL, short x, short y, short w, short h):
                 mostRecentUpdatePoint -= constructorBuffer;
         };
 
+Box::~Box(){
+    while(tickets.size() > 0){
+        delete tickets.at(0);
+        tickets.erase(tickets.begin());
+    }
+};
+
 void Box::setLabel(std::string s){
     if(label.compare(s) != 0){
         setMostRecentUpdatePoint(std::chrono::steady_clock::now());

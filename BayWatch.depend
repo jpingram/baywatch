@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1558482297 source:c:\users\cookie cat\documents\baywatch\main.cpp
+1558556071 source:c:\users\cookie cat\documents\baywatch\main.cpp
 	<TGUI/TGUI.hpp>
 	<SFML/Graphics.hpp>
 	<string>
@@ -10,11 +10,11 @@
 	"controller.h"
 	"ticket.h"
 
-1551489358 source:c:\users\cookie cat\documents\baywatch\data.cpp
+1558554775 source:c:\users\cookie cat\documents\baywatch\data.cpp
 	<SFML/Graphics/Color.hpp>
 	"data.h"
 
-1551486720 c:\users\cookie cat\documents\baywatch\data.h
+1558554545 c:\users\cookie cat\documents\baywatch\data.h
 	<SFML/Graphics/Color.hpp>
 
 1556919919 source:c:\users\cookie cat\documents\baywatch\rect.cpp
@@ -29,7 +29,7 @@
 1558469124 c:\users\cookie cat\documents\baywatch\ticket.h
 	<string>
 
-1558476906 source:c:\users\cookie cat\documents\baywatch\box.cpp
+1558552185 source:c:\users\cookie cat\documents\baywatch\box.cpp
 	<string>
 	<sstream>
 	<vector>
@@ -39,14 +39,14 @@
 	"ticket.h"
 	"box.h"
 
-1558482664 c:\users\cookie cat\documents\baywatch\box.h
+1558551957 c:\users\cookie cat\documents\baywatch\box.h
 	<string>
 	<vector>
 	<chrono>
 	"ticket.h"
 	"rect.h"
 
-1558478375 source:c:\users\cookie cat\documents\baywatch\controller.cpp
+1558552846 source:c:\users\cookie cat\documents\baywatch\controller.cpp
 	<vector>
 	<string>
 	<sstream>
