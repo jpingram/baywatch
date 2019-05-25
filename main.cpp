@@ -190,9 +190,11 @@ void newVehicleWindow(tgui::Gui& gui, Controller& c, unsigned short t){
                         ->setText("Error: \"Ticket ID\" cannot be left blank.");
                 }else
                 if(c.getBucketIndexById(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))
-                                    ->getText().toAnsiString()) != -1){
+                                    ->getText().toAnsiString()) != -1 &&
+                   c.getBucketIndexById(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("idInput"))
+                                    ->getText().toAnsiString()) != c.getSelectedBucket()){
                     std::dynamic_pointer_cast<tgui::Label>(vwindow->get("warningLabel"))
-                        ->setText("Error: \"Ticket ID\" is already being used.");
+                        ->setText("Error: \"Ticket ID\" is being used by another ticket.");
                 }else
                 if(std::dynamic_pointer_cast<tgui::EditBox>(vwindow->get("vehicleInput"))->getText().toAnsiString()
                                     .size() > VEHICLE_CHAR_LIMIT){
@@ -298,7 +300,7 @@ void newBayWindow(tgui::Gui& gui, Controller& c){
 };
 
 void openBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
-    target.create(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5.1 Bay Display");
+    target.create(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5.2 Bay Display");
     sf::Image icon;
     icon.loadFromMemory(logo32, logo32_length);
     target.setIcon(32, 32, icon.getPixelsPtr());
@@ -328,7 +330,7 @@ void closeBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
 
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5.1");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.5.2");
     sf::Image icon;
     icon.loadFromMemory(logo32, logo32_length);
     window.setIcon(32, 32, icon.getPixelsPtr());
