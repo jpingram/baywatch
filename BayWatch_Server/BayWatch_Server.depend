@@ -1,0 +1,90 @@
+# depslib dependency file v1.0
+1570388687 source:c:\users\cookie cat\documents\baywatch\baywatch_server\box.cpp
+	<string>
+	<sstream>
+	<vector>
+	<chrono>
+	<cmath>
+	"rect.h"
+	"ticket.h"
+	"box.h"
+
+1556910819 c:\users\cookie cat\documents\baywatch\baywatch_server\rect.h
+
+1558472724 c:\users\cookie cat\documents\baywatch\baywatch_server\ticket.h
+	<string>
+
+1570388700 c:\users\cookie cat\documents\baywatch\baywatch_server\box.h
+	<string>
+	<vector>
+	<chrono>
+	"ticket.h"
+	"rect.h"
+
+1558556446 source:c:\users\cookie cat\documents\baywatch\baywatch_server\controller.cpp
+	<vector>
+	<string>
+	<sstream>
+	<iostream>
+	<memory>
+	<chrono>
+	<TGUI/Gui.hpp>
+	<TGUI/Layout.hpp>
+	<TGUI/Vector2f.hpp>
+	<TGUI/Renderers/LabelRenderer.hpp>
+	<TGUI/Widgets/Label.hpp>
+	<SFML/Graphics/RectangleShape.hpp>
+	<SFML/Graphics/Text.hpp>
+	"data.h"
+	"box.h"
+	"ticketbucket.h"
+	"controller.h"
+
+1558558145 c:\users\cookie cat\documents\baywatch\baywatch_server\data.h
+	<SFML/Graphics/Color.hpp>
+
+1570189011 c:\users\cookie cat\documents\baywatch\baywatch_server\ticketbucket.h
+	<string>
+	<chrono>
+	"ticket.h"
+
+1558472573 c:\users\cookie cat\documents\baywatch\baywatch_server\controller.h
+	<vector>
+	<chrono>
+	<TGUI/Gui.hpp>
+	<SFML/Graphics/RectangleShape.hpp>
+	<SFML/Graphics/Text.hpp>
+	"box.h"
+	"ticketbucket.h"
+
+1558558375 source:c:\users\cookie cat\documents\baywatch\baywatch_server\data.cpp
+	<SFML/Graphics/Color.hpp>
+	"data.h"
+
+1556923519 source:c:\users\cookie cat\documents\baywatch\baywatch_server\rect.cpp
+	"rect.h"
+
+1557006115 source:c:\users\cookie cat\documents\baywatch\baywatch_server\ticket.cpp
+	<string>
+	"ticket.h"
+
+1570189007 source:c:\users\cookie cat\documents\baywatch\baywatch_server\ticketbucket.cpp
+	<chrono>
+	<string>
+	<sstream>
+	<cmath>
+	"ticket.h"
+	"ticketbucket.h"
+
+1570437121 source:c:\users\cookie cat\documents\baywatch\baywatch_server\main.cpp
+	<TGUI/TGUI.hpp>
+	<SFML/Graphics.hpp>
+	<SFML/Network.hpp>
+	<string>
+	<sstream>
+	<iostream>
+	<memory>
+	"data.h"
+	"controller.h"
+	"ticket.h"
+

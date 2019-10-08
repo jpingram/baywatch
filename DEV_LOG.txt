@@ -306,3 +306,17 @@
 		tickets being edited would have the same ID as itself
 		""Ticket ID" is already being used." error
 		'OK' "pressed" function now checks if new ID is equal to current ID
+7th of October [9:18PM] - Alpha 0.6.1 - Server/Client model adopted
+	two versions of application created
+		server - runs main program, sends data packets on data changes
+		client - meant to run on exernal system
+			uses data packets from server to display data
+	utilizes SFML Network library
+		namely, sf::Packet and sf::UdpSocket libraries
+	versions tested, client application to be tested on raspberry pi hardware
+	various helper funtions added
+		to Box, Ticketbucket, Controller, and Main
+		in both versions, where applicable
+		NOTE: for consistency, versions should not differ in helper functions
+	0.6.1 - server now broadcasts automatically
+		option still exists to broadcast info manually through GUI
