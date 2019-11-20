@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1558555785 source:c:\users\cookie cat\documents\baywatch\baywatch_client\box.cpp
+1558552185 source:c:\users\cookie cat\documents\baywatch\baywatch_client\box.cpp
 	<string>
 	<sstream>
 	<vector>
@@ -9,19 +9,19 @@
 	"ticket.h"
 	"box.h"
 
-1556910819 c:\users\cookie cat\documents\baywatch\baywatch_client\rect.h
+1556907219 c:\users\cookie cat\documents\baywatch\baywatch_client\rect.h
 
-1558472724 c:\users\cookie cat\documents\baywatch\baywatch_client\ticket.h
+1558469124 c:\users\cookie cat\documents\baywatch\baywatch_client\ticket.h
 	<string>
 
-1558555557 c:\users\cookie cat\documents\baywatch\baywatch_client\box.h
+1558551957 c:\users\cookie cat\documents\baywatch\baywatch_client\box.h
 	<string>
 	<vector>
 	<chrono>
 	"ticket.h"
 	"rect.h"
 
-1570448187 source:c:\users\cookie cat\documents\baywatch\baywatch_client\controller.cpp
+1570444587 source:c:\users\cookie cat\documents\baywatch\baywatch_client\controller.cpp
 	<vector>
 	<string>
 	<sstream>
@@ -40,15 +40,15 @@
 	"ticketbucket.h"
 	"controller.h"
 
-1558558145 c:\users\cookie cat\documents\baywatch\baywatch_client\data.h
+1558554545 c:\users\cookie cat\documents\baywatch\baywatch_client\data.h
 	<SFML/Graphics/Color.hpp>
 
-1570445540 c:\users\cookie cat\documents\baywatch\baywatch_client\ticketbucket.h
+1570441940 c:\users\cookie cat\documents\baywatch\baywatch_client\ticketbucket.h
 	<string>
 	<chrono>
 	"ticket.h"
 
-1570447319 c:\users\cookie cat\documents\baywatch\baywatch_client\controller.h
+1570443719 c:\users\cookie cat\documents\baywatch\baywatch_client\controller.h
 	<vector>
 	<chrono>
 	<TGUI/Gui.hpp>
@@ -57,18 +57,18 @@
 	"box.h"
 	"ticketbucket.h"
 
-1558558375 source:c:\users\cookie cat\documents\baywatch\baywatch_client\data.cpp
+1558554775 source:c:\users\cookie cat\documents\baywatch\baywatch_client\data.cpp
 	<SFML/Graphics/Color.hpp>
 	"data.h"
 
-1556923519 source:c:\users\cookie cat\documents\baywatch\baywatch_client\rect.cpp
+1556919919 source:c:\users\cookie cat\documents\baywatch\baywatch_client\rect.cpp
 	"rect.h"
 
-1557006115 source:c:\users\cookie cat\documents\baywatch\baywatch_client\ticket.cpp
+1557002515 source:c:\users\cookie cat\documents\baywatch\baywatch_client\ticket.cpp
 	<string>
 	"ticket.h"
 
-1570445607 source:c:\users\cookie cat\documents\baywatch\baywatch_client\ticketbucket.cpp
+1570442007 source:c:\users\cookie cat\documents\baywatch\baywatch_client\ticketbucket.cpp
 	<chrono>
 	<string>
 	<sstream>
@@ -76,7 +76,9 @@
 	"ticket.h"
 	"ticketbucket.h"
 
-1570500982 source:c:\users\cookie cat\documents\baywatch\baywatch_client\main.cpp
+1574284247 source:c:\users\cookie cat\documents\baywatch\baywatch_client\main.cpp
+	<windows.h>
+	<iphlpapi.h>
 	<TGUI/TGUI.hpp>
 	<SFML/Graphics.hpp>
 	<SFML/Network.hpp>

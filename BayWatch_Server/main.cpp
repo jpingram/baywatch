@@ -1,3 +1,5 @@
+#include <windows.h>
+#include <iphlpapi.h>
 #include <TGUI/TGUI.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
@@ -51,6 +53,25 @@ void broadcast(sf::UdpSocket& socket, sf::Packet& p, Controller& c, sf::Uint8 i)
         }
 
         socket.send(p, sf::IpAddress::Broadcast, 62208);
+
+        PMIB_IPADDRTABLE pIPAddrTable;
+        DWORD tableSize = 0;
+        GetIpAddrTable(NULL, &tableSize, 0);
+        if (tableSize > 0)
+        {
+            pIPAddrTable = (PMIB_IPADDRTABLE)calloc(tableSize, 1);
+            if (GetIpAddrTable(pIPAddrTable, &tableSize, 0) == NO_ERROR)
+            {
+                for(unsigned int n=0; n < pIPAddrTable->dwNumEntries; n++)
+                {
+                    sf::IpAddress ip(ntohl((pIPAddrTable->table[n].dwAddr
+                                            & pIPAddrTable->table[n].dwMask)
+                                           | ~pIPAddrTable->table[n].dwMask));
+                    socket.send(p, ip, 62208);
+                }
+            }
+            free(pIPAddrTable);
+        }
     }catch(std::exception &e){
         std::cout << e.what() << std::endl;
     }
@@ -363,7 +384,7 @@ void closeBayDisplayWindow(sf::RenderWindow &target, tgui::Gui &gui){
 
 int main(){
     //create window and window related objects
-    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.6.1");
+    sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), "BayWatch 0.6.2");
     sf::Image icon;
     icon.loadFromMemory(logo32, logo32_length);
     window.setIcon(32, 32, icon.getPixelsPtr());
